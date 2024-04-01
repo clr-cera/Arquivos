@@ -1,21 +1,33 @@
-all: main
-	gcc -I. *.o -o main.out -std=c99 -Wall -lmd
+all: main lib operations file_manager
+	gcc -I. *.o -o main.output -std=c99 -Wall -lmd
 	rm -f *.o
  
 main:
-	gcc -c main.c -o main.o
+	gcc -c src/main.c
 
-example:
-	gcc -c example.c -o example.o
+lib:
+	gcc -c src/Lib/*.c 
+
+operations:
+	gcc -c src/Operations/*.c
+
+funcoes_fornecidas:
+	gcc -c src/Funcoes_fornecidas/*.c
+
+file_manager: file_walker
+	gcc -c src/FileManager/*.c
+
+file_walker:
+	gcc -c src/FileManager/FileWalker/*.c
 
 clean:
 	rm -f *.o *.out *.zip
 
 run:
-	./main.out
+	./main.output
 
 test:
-	./main.out < ./tests/caso1.in
+	./main.output < ./tests/caso1.in
 	
 zip:
-	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.txt'
+	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.out' '*.txt' '*.bin' '*.csv'

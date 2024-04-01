@@ -14,10 +14,10 @@ int main(void) {
   while (scanf(" %c", &c) != EOF){
     if (c == '1') {
       char* input_path = read_string();
-      char* output_path = read_string();
+      char* output_name = read_string();
 
-      create_table(input_path, output_path, file_manager);
-      free(input_path); free(output_path);
+      create_table(input_path, output_name, file_manager);
+      free(input_path);
     }
 
     if (c == '2') {
