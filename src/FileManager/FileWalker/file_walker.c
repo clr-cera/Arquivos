@@ -1,5 +1,4 @@
 #include "file_walker.h"
-#include "Register/register.h"
 #include "Header/header.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,4 +24,8 @@ FileWalker create_file_walker(string file_path, bool load_header) {
   else fw->header = new_header();
 
   return fw;
+}
+
+void fw_insert_all(FileWalker fw, RegisterCollection regcol) {
+  write_register_collection(fw->fp, regcol);
 }
