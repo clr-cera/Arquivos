@@ -58,22 +58,25 @@ Register read_register(FILE* fp) {
   
   fread(&(reg->tamNomeJog), sizeof(int), 1, fp);
   if (reg->tamNomeJog > 0){
-    reg->nomeJogador = (string) malloc(reg->tamNomeJog* sizeof(char));
+    reg->nomeJogador = (string) malloc((reg->tamNomeJog+1)* sizeof(char));
     fread(reg->nomeJogador, sizeof(char), reg->tamNomeJog, fp); 
+    reg->nomeJogador[reg->tamNomeJog] = '\0';
   }
   else reg->nomeJogador = NULL; 
 
   fread(&(reg->tamNacionalidade), sizeof(int), 1, fp);
   if (reg->tamNacionalidade > 0){
-    reg->nacionalidade = (string) malloc(reg->tamNacionalidade* sizeof(char));
+    reg->nacionalidade = (string) malloc((reg->tamNacionalidade+1)* sizeof(char));
     fread(reg->nacionalidade, sizeof(char), reg->tamNacionalidade, fp); 
+    reg->nacionalidade[reg->tamNacionalidade] = '\0';
   }
   else reg->nacionalidade = NULL;
   
   fread(&(reg->tamNomeClube), sizeof(int), 1, fp);
   if (reg->tamNomeClube > 0){
-    reg->nomeClube = (string) malloc(reg->tamNomeClube* sizeof(char));
+    reg->nomeClube = (string) malloc((reg->tamNomeClube+1)* sizeof(char));
     fread(reg->nomeClube, sizeof(char), reg->tamNomeClube, fp); 
+    reg->nomeClube[reg->tamNomeClube] = '\0';
   }
   else reg->nomeClube = NULL;
 
