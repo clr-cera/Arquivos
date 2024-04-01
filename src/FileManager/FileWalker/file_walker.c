@@ -9,6 +9,7 @@ typedef struct file_walker_ {
   FILE* fp;
 
   Header header;
+  Register current_register;
 
 }file_walker_obj;
 typedef file_walker_obj* FileWalker;
