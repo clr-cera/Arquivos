@@ -1,5 +1,5 @@
 all: main
-	gcc -I. *.o -o main.out -std=c99 -Wall
+	gcc -I. *.o -o main.out -std=c99 -Wall -lmd
 	rm -f *.o
  
 main:
