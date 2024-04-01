@@ -29,3 +29,7 @@ FileWalker create_file_walker(string file_path, bool load_header) {
 void fw_insert_all(FileWalker fw, RegisterCollection regcol) {
   write_register_collection(fw->fp, regcol);
 }
+
+void fw_insert(FileWalker fw, Register reg) {
+  write_register(fw->fp, reg);
+}

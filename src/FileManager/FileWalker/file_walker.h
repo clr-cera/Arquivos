@@ -9,3 +9,4 @@ FileWalker create_file_walker(string file_path, bool new_header);
 
 void fw_insert_all(FileWalker fw, RegisterCollection regcol);
 
+void fw_insert(FileWalker fw, Register reg);
