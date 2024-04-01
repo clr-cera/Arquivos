@@ -3,4 +3,7 @@
 
 typedef struct register_* Register;
 
-Register create_empty_register(void); 
+typedef struct register_collection_ register_collection;
+
+Register create_empty_register(void);
+Register* csv_to_register_vector(string file_path);

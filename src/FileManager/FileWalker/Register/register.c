@@ -22,5 +22,12 @@ typedef struct register_{
 }register_obj;
 typedef register_obj* Register;
 
-Register create_empty_register(void); 
+typedef struct register_collection_ {
+  Register* vec;
+  int length;
+}register_collection;
+
+Register create_empty_register(void) {
+  
+} 
 
