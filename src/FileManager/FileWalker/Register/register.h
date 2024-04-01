@@ -4,8 +4,10 @@
 
 typedef struct register_* Register;
 
-typedef struct register_collection_ register_collection;
+typedef struct register_collection_* RegisterCollection;
 
-register_collection csv_to_register_vector(string file_path);
+RegisterCollection csv_to_register_vector(string file_path);
 
 Register csv_line_to_register(FILE* fp);
+
+void write_register_collection(FILE* fp, RegisterCollection regcol);

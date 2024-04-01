@@ -25,7 +25,7 @@ typedef struct register_collection_ {
   Register* vec;
   int length;
 }register_collection;
-
+typedef register_collection* RegisterCollection;
 
 
 void write_register(FILE* fp, Register reg) {
@@ -43,4 +43,10 @@ void write_register(FILE* fp, Register reg) {
   
   fwrite(&(reg->tamNomeClube), sizeof(int), 1, fp);
   fwrite(reg->nomeClube, sizeof(char), reg->tamNomeClube, fp); 
+}
+
+void write_register_collection(FILE* fp, RegisterCollection regcol) {
+  for(int i = 0; i < regcol->length; i++) {
+    write_register(fp, regcol->vec[i]);
+  }
 }
