@@ -5,11 +5,11 @@
 
 void insert_name_in_registry(FileManager fm, string file_name);
 void create_file(FileManager fm, string file_name);
+void delete_file(FileManager fm, string file_name);
 
 typedef struct file_manager_obj_ {
   string* file_name_registry;
   int file_number;
-  string data_path;
 }file_manager_obj;
 
 typedef file_manager_obj* FileManager;
@@ -24,6 +24,12 @@ FileManager create_file_manager(void) {
 
 void erase_file_manager(FileManager* fmp) {
   FileManager fm = *fmp;
+
+  for(int i = 0; i < fm->file_number; i++)
+    if (fm->file_name_registry[i] != NULL) {
+      delete_file(fm, fm->file_name_registry[i]);
+    }
+
   for(int i = 0; i < fm->file_number; i++) 
     if (fm->file_name_registry[i] != NULL) {
       free(fm->file_name_registry[i]);
@@ -44,6 +50,14 @@ void create_file(FileManager fm, string file_name) {
   string file_path = concat_string(DATA_PATH, file_name);
 
   fclose(fopen(file_path, "w")); 
+  free(file_path);
+}
+
+void delete_file(FileManager fm, string file_name) {
+  string file_path = concat_string(DATA_PATH, file_name);
+  
+  remove(file_path);
+  free(file_path);
 }
 
 void insert_name_in_registry(FileManager fm, string file_name) {
@@ -54,5 +68,4 @@ void insert_name_in_registry(FileManager fm, string file_name) {
   fm->file_name_registry[fm->file_number] = file_name;
   fm->file_number+=1;
 }
-
 
