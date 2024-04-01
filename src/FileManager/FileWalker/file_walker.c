@@ -7,6 +7,7 @@
 typedef struct file_walker_ {
   string file_path;
   FILE* fp;
+
   Header header;
 
 }file_walker_obj;
