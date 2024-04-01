@@ -36,13 +36,49 @@ void write_register(FILE* fp, Register reg) {
   fwrite(&(reg->idade), sizeof(int), 1, fp);
 
   fwrite(&(reg->tamNomeJog), sizeof(int), 1, fp);
-  fwrite(reg->nomeJogador, sizeof(char), reg->tamNomeJog, fp); 
+  if (reg->tamNomeJog > 0)
+    fwrite(reg->nomeJogador, sizeof(char), reg->tamNomeJog, fp); 
 
   fwrite(&(reg->tamNacionalidade), sizeof(int), 1, fp);
-  fwrite(reg->nacionalidade, sizeof(char), reg->tamNacionalidade, fp); 
+  if (reg->tamNacionalidade > 0)
+    fwrite(reg->nacionalidade, sizeof(char), reg->tamNacionalidade, fp); 
   
   fwrite(&(reg->tamNomeClube), sizeof(int), 1, fp);
-  fwrite(reg->nomeClube, sizeof(char), reg->tamNomeClube, fp); 
+  if (reg->tamNomeClube > 0)
+    fwrite(reg->nomeClube, sizeof(char), reg->tamNomeClube, fp); 
+}
+
+Register read_register(FILE* fp) {
+  Register reg = (Register) malloc(sizeof(register_obj));
+  fread(&(reg->removido), sizeof(char), 1, fp);
+  fread(&(reg->tamanhoRegistro), sizeof(int), 1, fp);
+  fread(&(reg->prox), sizeof(long int), 1, fp);
+  fread(&(reg->id), sizeof(int), 1, fp);
+  fread(&(reg->idade), sizeof(int), 1, fp);
+  
+  fread(&(reg->tamNomeJog), sizeof(int), 1, fp);
+  if (reg->tamNomeJog > 0){
+    reg->nomeJogador = (string) malloc(reg->tamNomeJog* sizeof(char));
+    fread(reg->nomeJogador, sizeof(char), reg->tamNomeJog, fp); 
+  }
+  else reg->nomeJogador = NULL; 
+
+  fread(&(reg->tamNacionalidade), sizeof(int), 1, fp);
+  if (reg->tamNacionalidade > 0){
+    reg->nacionalidade = (string) malloc(reg->tamNacionalidade* sizeof(char));
+    fread(reg->nacionalidade, sizeof(char), reg->tamNacionalidade, fp); 
+  }
+  else reg->nacionalidade = NULL;
+  
+  fread(&(reg->tamNomeClube), sizeof(int), 1, fp);
+  if (reg->tamNomeClube > 0){
+    reg->nomeClube = (string) malloc(reg->tamNomeClube* sizeof(char));
+    fread(reg->nomeClube, sizeof(char), reg->tamNomeClube, fp); 
+  }
+  else reg->nomeClube = NULL;
+
+
+  return reg;
 }
 
 void write_register_collection(FILE* fp, RegisterCollection regcol) {

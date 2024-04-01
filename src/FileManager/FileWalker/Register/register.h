@@ -13,4 +13,3 @@ Register csv_line_to_register(FILE* fp);
 void write_register(FILE* fp, Register reg);
 
 void write_register_collection(FILE* fp, RegisterCollection regcol);
-
