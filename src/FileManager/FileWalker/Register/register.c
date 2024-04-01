@@ -48,6 +48,7 @@ void write_register(FILE* fp, Register reg) {
     fwrite(reg->nomeClube, sizeof(char), reg->tamNomeClube, fp); 
 }
 
+// TODO make a function to modularize reading of dinamic fields
 Register read_register(FILE* fp) {
   Register reg = (Register) malloc(sizeof(register_obj));
   fread(&(reg->removido), sizeof(char), 1, fp);
