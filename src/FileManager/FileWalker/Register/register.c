@@ -1,5 +1,4 @@
 #include "register.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 
@@ -26,8 +25,4 @@ typedef struct register_collection_ {
   Register* vec;
   int length;
 }register_collection;
-
-Register create_empty_register(void) {
-  
-} 
 
