@@ -27,6 +27,9 @@ typedef struct register_collection_ {
 }register_collection;
 typedef register_collection* RegisterCollection;
 
+void read_dinamic_field(string* string_field, int* string_size, FILE* fp);
+void write_dinamic_field(string string_field, int string_size, FILE* fp);
+
 
 void write_register(FILE* fp, Register reg) {
   fwrite(&(reg->removido), sizeof(char), 1, fp);
@@ -35,20 +38,13 @@ void write_register(FILE* fp, Register reg) {
   fwrite(&(reg->id), sizeof(int), 1, fp);
   fwrite(&(reg->idade), sizeof(int), 1, fp);
 
-  fwrite(&(reg->tamNomeJog), sizeof(int), 1, fp);
-  if (reg->tamNomeJog > 0)
-    fwrite(reg->nomeJogador, sizeof(char), reg->tamNomeJog, fp); 
+  write_dinamic_field(reg->nomeJogador, reg->tamNomeJog, fp);
 
-  fwrite(&(reg->tamNacionalidade), sizeof(int), 1, fp);
-  if (reg->tamNacionalidade > 0)
-    fwrite(reg->nacionalidade, sizeof(char), reg->tamNacionalidade, fp); 
+  write_dinamic_field(reg->nacionalidade, reg->tamNacionalidade, fp);
   
-  fwrite(&(reg->tamNomeClube), sizeof(int), 1, fp);
-  if (reg->tamNomeClube > 0)
-    fwrite(reg->nomeClube, sizeof(char), reg->tamNomeClube, fp); 
+  write_dinamic_field(reg->nomeClube, reg->tamNomeClube, fp);
 }
 
-// TODO make a function to modularize reading of dinamic fields
 Register read_register(FILE* fp) {
   Register reg = (Register) malloc(sizeof(register_obj));
   fread(&(reg->removido), sizeof(char), 1, fp);
@@ -57,32 +53,36 @@ Register read_register(FILE* fp) {
   fread(&(reg->id), sizeof(int), 1, fp);
   fread(&(reg->idade), sizeof(int), 1, fp);
   
-  fread(&(reg->tamNomeJog), sizeof(int), 1, fp);
-  if (reg->tamNomeJog > 0){
-    reg->nomeJogador = (string) malloc((reg->tamNomeJog+1)* sizeof(char));
-    fread(reg->nomeJogador, sizeof(char), reg->tamNomeJog, fp); 
-    reg->nomeJogador[reg->tamNomeJog] = '\0';
-  }
-  else reg->nomeJogador = NULL; 
+  read_dinamic_field(&reg->nomeJogador, &reg->tamNomeJog, fp);
 
-  fread(&(reg->tamNacionalidade), sizeof(int), 1, fp);
-  if (reg->tamNacionalidade > 0){
-    reg->nacionalidade = (string) malloc((reg->tamNacionalidade+1)* sizeof(char));
-    fread(reg->nacionalidade, sizeof(char), reg->tamNacionalidade, fp); 
-    reg->nacionalidade[reg->tamNacionalidade] = '\0';
-  }
-  else reg->nacionalidade = NULL;
+  read_dinamic_field(&reg->nacionalidade, &reg->tamNacionalidade, fp);
   
-  fread(&(reg->tamNomeClube), sizeof(int), 1, fp);
-  if (reg->tamNomeClube > 0){
-    reg->nomeClube = (string) malloc((reg->tamNomeClube+1)* sizeof(char));
-    fread(reg->nomeClube, sizeof(char), reg->tamNomeClube, fp); 
-    reg->nomeClube[reg->tamNomeClube] = '\0';
-  }
-  else reg->nomeClube = NULL;
-
+  read_dinamic_field(&reg->nomeClube, &reg->tamNomeClube, fp);
 
   return reg;
+}
+
+void read_dinamic_field(string* string_field, int* string_size, FILE* fp) {
+  // ler tamanho
+  fread(string_size, sizeof(int), 1, fp);
+
+  // ler string se ela existir
+  if (*string_size > 0){
+    *string_field = (string) malloc((*string_size+1)* sizeof(char));
+    fread(*string_field, sizeof(char), *string_size, fp); 
+    *string_field[*string_size] = '\0';
+  }
+  else *string_field = NULL;
+}
+
+void write_dinamic_field(string string_field, int string_size, FILE* fp) {
+  // escreve tamanho
+  fwrite(&string_size, sizeof(int), 1, fp);
+  
+  // escreve string  
+  if (string_size > 0)
+    fwrite(string_field, sizeof(char), string_size, fp); 
+
 }
 
 void write_register_collection(FILE* fp, RegisterCollection regcol) {
