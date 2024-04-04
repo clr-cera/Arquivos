@@ -39,3 +39,41 @@ string concat_string(string s1, string s2) {
 
   return str;
 }
+
+int string_to_int(char* str, int* start){
+  int number = 0;
+  for(start; str[*start] > 47 && str[*start] < 58; *start++){
+    number += str[*start] - 48;
+    number *= 10;
+  }
+  return number / 10;
+}
+
+int dist_to_target(char* str, int start, char target){
+  int dist = 0;
+  for(int i = start; str[i] != target; i++){
+    if(str[i] == '\n' || str[i] == EOF)
+      break;
+    dist++;
+  }
+  return dist;
+}
+
+char* string_slicer(char* str, int start, int size){
+  char* new_string = malloc(size * sizeof(char));
+  for(int i = 0; i < size; i++){
+    new_string[i] = str[i + start];
+  }
+  return new_string;
+}
+
+int count_lines(FILE* fp){
+  int counter;
+  FILE* previous_position = fp;
+  while(!feof(fp)){
+    if(fgetc(fp) == '\n')
+      counter++;
+  }
+  fp = previous_position;
+  return counter;
+}

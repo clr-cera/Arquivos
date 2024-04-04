@@ -1,6 +1,8 @@
 #include "register.h"
 #include <stdlib.h>
 
+#define CSV_LINE_SIZE_BUFFER 256
+
 // Todos os tam não devem contar o \0 da string
 typedef struct register_{
   char removido;
@@ -29,7 +31,6 @@ typedef register_collection* RegisterCollection;
 
 void read_dinamic_field(string* string_field, int* string_size, FILE* fp);
 void write_dinamic_field(string string_field, int string_size, FILE* fp);
-
 
 void write_register(FILE* fp, Register reg) {
   fwrite(&(reg->removido), sizeof(char), 1, fp);
@@ -90,3 +91,64 @@ void write_register_collection(FILE* fp, RegisterCollection regcol) {
     write_register(fp, regcol->vec[i]);
   }
 }
+
+RegisterCollection csv_to_register_vector(string file_path){
+  FILE* fp = fopen(file_path, 'r');
+
+  //O primeiro registro é inválido, então ele é descartado
+  free_register(csv_line_to_register(fp));
+
+  RegisterCollection new_collection = malloc(sizeof(RegisterCollection));
+  new_collection->length = count_lines(fp);
+  new_collection->vec = malloc(new_collection->length * sizeof(Register));
+
+  for(int i = 0; i < new_collection->length && !feof(fp); i++){
+    (new_collection->vec)[i] = csv_line_to_register(fp);
+  }
+
+  return new_collection;
+}
+
+Register csv_line_to_register(FILE* fp){
+  Register line = malloc(sizeof(register_obj));
+  //Os campos "removido" e "prox" não serão utilizados nessa função, então são definidos para um valor padrão
+  line->removido = '0';
+  line->prox = -1;
+
+  char string[CSV_LINE_SIZE_BUFFER];
+  fgets(string, CSV_LINE_SIZE_BUFFER, fp);
+
+  int field = 0;
+  for(int i = 0; string[i] != '\n' || string[i] != EOF || string[i] != '\0'; i++){
+    if(string[i] == ','){
+      field++;
+      continue;
+    }
+    switch(field){
+      case 0:
+        line->id = string_to_int(string, &i);
+        break;
+      case 1:
+        line->idade = string_to_int(string, &i);
+        break;
+      case 2:
+        line->tamNomeJog = dist_to_char(string, i, ',');
+        line->nomeJogador = string_slicer(string, i, line->tamNomeJog);
+        i += line->tamNomeJog;
+        break;
+      case 3:
+        line->tamNacionalidade = dist_to_char(string, i, ',');
+        line->nacionalidade = string_slicer(string, i, line->tamNacionalidade);
+        i += line->tamNacionalidade;
+        break;
+      case 4:
+        line->tamNomeClube = dist_to_char(string, i, ',');
+        line->nomeClube = string_slicer(string, i, line->tamNomeClube);
+        i += line->tamNomeClube;
+        break;
+    }
+  }
+  line->tamanhoRegistro = line->tamNomeClube + line->tamNacionalidade + line->tamNomeJog + 5 * sizeof(int) + sizeof(char) + sizeof(long int);
+  return line;
+}
+
