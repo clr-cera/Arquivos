@@ -1,4 +1,4 @@
-all: main lib operations file_manager
+all: main lib operations file_manager funcoes_fornecidas
 	gcc -I. *.o -o main.output -std=c99 -Wall -lmd
 	rm -f *.o
  
@@ -7,6 +7,7 @@ main:
 
 lib:
 	gcc -c src/Lib/*.c 
+
 
 operations:
 	gcc -c src/Operations/*.c

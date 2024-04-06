@@ -1,5 +1,6 @@
 #include "../FileManager/file_manager.h"
 #include "../Lib/lib.h"
+#include "../Funcoes_fornecidas/funcoes_fornecidas.h"
 
 //Este header é responsável pra ser usado como interface com todas 
 //as possíveis operações
