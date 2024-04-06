@@ -1,5 +1,4 @@
 #include "lib.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 // lib_strings é responsável por conter funções relacionadas a strings
@@ -42,7 +41,7 @@ string concat_string(string s1, string s2) {
 
 int string_to_int(char* str, int* start){
   int number = 0;
-  for(start; str[*start] > 47 && str[*start] < 58; *start++){
+  for(; str[*start] > 47 && str[*start] < 58; (*start)++){
     number += str[*start] - 48;
     number *= 10;
   }

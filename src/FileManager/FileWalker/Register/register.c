@@ -32,6 +32,14 @@ typedef register_collection* RegisterCollection;
 void read_dinamic_field(string* string_field, int* string_size, FILE* fp);
 void write_dinamic_field(string string_field, int string_size, FILE* fp);
 
+void free_register(Register* regp) {
+  free((*regp)->nomeJogador);
+  free((*regp)->nacionalidade);
+  free((*regp)->nomeClube);
+  free(*regp);
+  *regp = NULL;
+}
+
 void write_register(FILE* fp, Register reg) {
   fwrite(&(reg->removido), sizeof(char), 1, fp);
   fwrite(&(reg->tamanhoRegistro), sizeof(int), 1, fp);
@@ -93,10 +101,11 @@ void write_register_collection(FILE* fp, RegisterCollection regcol) {
 }
 
 RegisterCollection csv_to_register_vector(string file_path){
-  FILE* fp = fopen(file_path, 'r');
+  FILE* fp = fopen(file_path, "r");
 
   //O primeiro registro é inválido, então ele é descartado
-  free_register(csv_line_to_register(fp));
+  Register first_register = csv_line_to_register(fp);
+  free_register(&first_register);
 
   RegisterCollection new_collection = malloc(sizeof(RegisterCollection));
   new_collection->length = count_lines(fp);
@@ -132,17 +141,17 @@ Register csv_line_to_register(FILE* fp){
         line->idade = string_to_int(string, &i);
         break;
       case 2:
-        line->tamNomeJog = dist_to_char(string, i, ',');
+        line->tamNomeJog = dist_to_target(string, i, ',');
         line->nomeJogador = string_slicer(string, i, line->tamNomeJog);
         i += line->tamNomeJog;
         break;
       case 3:
-        line->tamNacionalidade = dist_to_char(string, i, ',');
+        line->tamNacionalidade = dist_to_target(string, i, ',');
         line->nacionalidade = string_slicer(string, i, line->tamNacionalidade);
         i += line->tamNacionalidade;
         break;
       case 4:
-        line->tamNomeClube = dist_to_char(string, i, ',');
+        line->tamNomeClube = dist_to_target(string, i, ',');
         line->nomeClube = string_slicer(string, i, line->tamNomeClube);
         i += line->tamNomeClube;
         break;
