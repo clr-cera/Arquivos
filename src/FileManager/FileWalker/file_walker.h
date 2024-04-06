@@ -6,6 +6,7 @@
 typedef struct file_walker_* FileWalker;
 
 FileWalker create_file_walker(string file_path, bool new_header);
+void close_file_walker(FileWalker* fwp);
 
 void fw_insert_all(FileWalker fw, RegisterCollection regcol);
 

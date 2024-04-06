@@ -33,6 +33,14 @@ void write_header(FILE* fp, Header header) {
   fwrite(header, sizeof(header_obj), 1, fp);
 }
 
+void header_increse_register_number(Header header, int number) {
+  header->nroRegArq+=number;
+}
+
+void header_increse_offset_number(Header header, long int number) {
+  header->proxByteOffset += number;
+}
+
 void erase_header(Header* headerp) {
   free(*headerp);
   *headerp = NULL;

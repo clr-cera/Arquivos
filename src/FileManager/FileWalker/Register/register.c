@@ -1,5 +1,4 @@
 #include "register.h"
-#include <stdlib.h>
 
 #define CSV_LINE_SIZE_BUFFER 256
 
@@ -23,14 +22,30 @@ typedef struct register_{
 }register_obj;
 typedef register_obj* Register;
 
-typedef struct register_collection_ {
-  Register* vec;
-  int length;
-}register_collection;
-typedef register_collection* RegisterCollection;
 
 void read_dinamic_field(string* string_field, int* string_size, FILE* fp);
 void write_dinamic_field(string string_field, int string_size, FILE* fp);
+void debug_dinamic_field(int size, string str);
+
+void debug_register(Register reg) {
+  printf("id: %d\n idade: %d\n", reg->id, reg->idade);
+
+  printf("nome jogador: ");
+  debug_dinamic_field(reg->tamNomeJog, reg->nomeJogador);
+
+  printf("nacionalidade: ");
+  debug_dinamic_field(reg->tamNacionalidade, reg->nacionalidade);
+
+  printf("nome clube: ");
+  debug_dinamic_field(reg->tamNomeClube, reg->nomeClube);
+}
+
+void debug_dinamic_field(int size, string str) {
+  printf("%d ",size);
+  for (int i =0; i < size; i ++)
+    printf("%c", str[i]);
+  printf("\n");
+}
 
 void free_register(Register* regp) {
   free((*regp)->nomeJogador);
@@ -38,6 +53,10 @@ void free_register(Register* regp) {
   free((*regp)->nomeClube);
   free(*regp);
   *regp = NULL;
+}
+
+long int get_register_tamanho(Register reg) {
+  return reg->tamanhoRegistro;
 }
 
 void write_register(FILE* fp, Register reg) {
@@ -94,29 +113,6 @@ void write_dinamic_field(string string_field, int string_size, FILE* fp) {
 
 }
 
-void write_register_collection(FILE* fp, RegisterCollection regcol) {
-  for(int i = 0; i < regcol->length; i++) {
-    write_register(fp, regcol->vec[i]);
-  }
-}
-
-RegisterCollection csv_to_register_vector(string file_path){
-  FILE* fp = fopen(file_path, "r");
-
-  //O primeiro registro é inválido, então ele é descartado
-  Register first_register = csv_line_to_register(fp);
-  free_register(&first_register);
-
-  RegisterCollection new_collection = malloc(sizeof(RegisterCollection));
-  new_collection->length = count_lines(fp);
-  new_collection->vec = malloc(new_collection->length * sizeof(Register));
-
-  for(int i = 0; i < new_collection->length && !feof(fp); i++){
-    (new_collection->vec)[i] = csv_line_to_register(fp);
-  }
-
-  return new_collection;
-}
 
 Register csv_line_to_register(FILE* fp){
   Register line = malloc(sizeof(register_obj));

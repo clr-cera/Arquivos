@@ -4,12 +4,17 @@
 #include <stdio.h>
 
 void fm_insert_name_in_registry(FileManager fm, string file_name);
+
 void fm_create_file(FileManager fm, string file_name);
 void fm_delete_file(FileManager fm, string file_name);
+
+void fm_create_file_walker(FileManager fm, string file_name, bool new_header);
+void fm_close_file_walker(FileManager fm);
 
 typedef struct file_manager_obj_ {
   string* file_name_registry;
   int file_number;
+  FileWalker curr_fw;
 }file_manager_obj;
 
 typedef file_manager_obj* FileManager;
@@ -18,9 +23,11 @@ FileManager create_file_manager(void) {
   FileManager fm = (FileManager) malloc(sizeof(file_manager_obj));
   fm->file_number = 0;
   fm->file_name_registry = (string *) malloc((fm->file_number+5) * sizeof(string));
+  fm->curr_fw = NULL;
   
   return fm;
 }
+
 
 void erase_file_manager(FileManager* fmp) {
   FileManager fm = *fmp;
@@ -44,6 +51,23 @@ void erase_file_manager(FileManager* fmp) {
 void fm_create_empty_table(FileManager fm, string file_name) {
   fm_insert_name_in_registry(fm, file_name);
   fm_create_file(fm, file_name);
+
+  fm_create_file_walker(fm, file_name, true); 
+  fm_close_file_walker(fm);
+}
+
+void fm_insert_csv(FileManager fm, string file_name, string csv_path) {
+  RegisterCollection regcol = csv_to_register_vector(csv_path);
+  debug_register_collection(regcol);
+}
+
+void fm_create_file_walker(FileManager fm, string file_name, bool new_header) {
+  string file_path = concat_string(DATA_PATH, file_name);
+  fm->curr_fw = create_file_walker(file_path, new_header);
+}
+
+void fm_close_file_walker(FileManager fm) {
+  close_file_walker(&fm->curr_fw);
 }
 
 void fm_create_file(FileManager fm, string file_name) {
