@@ -45,6 +45,7 @@ int string_to_int(char* str, int* start){
     number += str[*start] - 48;
     number *= 10;
   }
+
   return number / 10;
 }
 
@@ -67,12 +68,12 @@ char* string_slicer(char* str, int start, int size){
 }
 
 int count_lines(FILE* fp){
-  int counter;
-  FILE* previous_position = fp;
+  int counter = 0;
+  int initial_position = ftell(fp);
   while(!feof(fp)){
     if(fgetc(fp) == '\n')
       counter++;
   }
-  fp = previous_position;
+  fseek(fp, initial_position, SEEK_SET);
   return counter;
 }

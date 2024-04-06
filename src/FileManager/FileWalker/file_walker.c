@@ -27,6 +27,8 @@ FileWalker create_file_walker(string file_path, bool create_header) {
   }
   else fw->header = get_header(fw->fp);
 
+  fw->current_register = NULL;
+
   return fw;
 }
 

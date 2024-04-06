@@ -59,6 +59,7 @@ void fm_create_empty_table(FileManager fm, string file_name) {
 void fm_insert_csv(FileManager fm, string file_name, string csv_path) {
   RegisterCollection regcol = csv_to_register_vector(csv_path);
   debug_register_collection(regcol);
+  free_register_collection(&regcol);
 }
 
 void fm_create_file_walker(FileManager fm, string file_name, bool new_header) {
