@@ -21,7 +21,7 @@ file_walker:
 	gcc -c src/FileManager/FileWalker/*.c
 
 clean:
-	rm -f *.o *.out *.zip
+	rm -f *.o *.output *.zip
 
 run:
 	./main.output
