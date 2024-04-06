@@ -21,6 +21,7 @@ void free_register_collection(RegisterCollection* regcolp) {
       free_register(&(regcol->vec[i]));
   }
 
+  free(regcol->vec);
   free(regcol);
   *regcolp = NULL;
 }
@@ -51,12 +52,11 @@ RegisterCollection csv_to_register_vector(string file_path){
   new_collection->length = count_lines(fp);
   new_collection->vec = malloc(new_collection->length * sizeof(Register));
 
-  printf("o número de linhas é %d\n", new_collection->length);
-
   for(int i = 0; i < new_collection->length; i++){
     (new_collection->vec)[i] = csv_line_to_register(fp);
   }
 
+  fclose(fp);
   return new_collection;
 }
 

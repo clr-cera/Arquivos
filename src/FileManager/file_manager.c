@@ -35,17 +35,14 @@ void erase_file_manager(FileManager* fmp) {
   for(int i = 0; i < fm->file_number; i++)
     if (fm->file_name_registry[i] != NULL) {
       fm_delete_file(fm, fm->file_name_registry[i]);
-    }
-
-  for(int i = 0; i < fm->file_number; i++) 
-    if (fm->file_name_registry[i] != NULL) {
       free(fm->file_name_registry[i]);
       fm->file_name_registry[i] = NULL;
     }
 
+
   free(fm->file_name_registry);
   free(fm);
-  fmp = NULL;
+  *fmp = NULL;
 }
 
 void fm_create_empty_table(FileManager fm, string file_name) {
@@ -58,7 +55,7 @@ void fm_create_empty_table(FileManager fm, string file_name) {
 
 void fm_insert_csv(FileManager fm, string file_name, string csv_path) {
   RegisterCollection regcol = csv_to_register_vector(csv_path);
-  debug_register_collection(regcol);
+  //debug_register_collection(regcol);
   free_register_collection(&regcol);
 }
 

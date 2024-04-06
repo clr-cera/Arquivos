@@ -134,7 +134,7 @@ Register csv_line_to_register(FILE* fp){
   char string[CSV_LINE_SIZE_BUFFER];
   fgets(string, CSV_LINE_SIZE_BUFFER, fp);
 
-  printf("%s\n", string);
+  //printf("%s\n", string);
 
   int field = 0;
   for(int i = 0; string[i] != '\n' && string[i] != '\0'; i++){
