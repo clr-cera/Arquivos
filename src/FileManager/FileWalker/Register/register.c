@@ -26,6 +26,7 @@ typedef register_obj* Register;
 void read_dinamic_field(string* string_field, int* string_size, FILE* fp);
 void write_dinamic_field(string string_field, int string_size, FILE* fp);
 void debug_dinamic_field(int size, string str);
+void print_dinamic_field(int size, string str);
 
 void debug_register(Register reg) {
   printf("id: %d\nidade: %d\n", reg->id, reg->idade);
@@ -38,6 +39,30 @@ void debug_register(Register reg) {
 
   printf("nome clube: ");
   debug_dinamic_field(reg->tamNomeClube, reg->nomeClube);
+}
+
+void print_register(Register reg) {
+  printf("Nome do Jogador: ");
+  print_dinamic_field(reg->tamNomeJog, reg->nomeJogador);
+
+  printf("Nacionalidade do Jogador: ");
+  print_dinamic_field(reg->tamNacionalidade, reg->nacionalidade);
+
+  printf("Clube do Jogador: ");
+  print_dinamic_field(reg->tamNomeClube, reg->nomeClube);
+  
+  printf("\n");
+}
+
+void print_dinamic_field(int size, string str) {
+  if (size <= 0) {
+    printf("SEM DADO");
+  }
+  else {
+    for (int i = 0; i < size; i ++)
+      printf("%c", str[i]);
+  }
+  printf("\n");
 }
 
 void debug_dinamic_field(int size, string str) {
