@@ -94,8 +94,8 @@ long int get_register_tamanho(Register reg) {
 }
 
 void write_register(FILE* fp, Register reg) {
-  fwrite(&(reg->tamanhoRegistro), sizeof(int), 1, fp);
   fwrite(&(reg->removido), sizeof(char), 1, fp);
+  fwrite(&(reg->tamanhoRegistro), sizeof(int), 1, fp);
   fwrite(&(reg->prox), sizeof(long int), 1, fp);
   fwrite(&(reg->id), sizeof(int), 1, fp);
   fwrite(&(reg->idade), sizeof(int), 1, fp);
@@ -110,8 +110,8 @@ void write_register(FILE* fp, Register reg) {
 Register read_register(FILE* fp) {
   Register reg = (Register) malloc(sizeof(register_obj));
 
-  fread(&(reg->tamanhoRegistro), sizeof(int), 1, fp);
   fread(&(reg->removido), sizeof(char), 1, fp);
+  fread(&(reg->tamanhoRegistro), sizeof(int), 1, fp);
   fread(&(reg->prox), sizeof(long int), 1, fp);
   fread(&(reg->id), sizeof(int), 1, fp);
   fread(&(reg->idade), sizeof(int), 1, fp);
@@ -155,6 +155,10 @@ Register csv_line_to_register(FILE* fp){
   //Os campos "removido" e "prox" não serão utilizados nessa função, então são definidos para um valor padrão
   line->removido = '0';
   line->prox = -1;
+
+  // Caso falte registro
+  line->id = -1;
+  line->idade = -1;
 
   char string[CSV_LINE_SIZE_BUFFER];
   fgets(string, CSV_LINE_SIZE_BUFFER, fp);

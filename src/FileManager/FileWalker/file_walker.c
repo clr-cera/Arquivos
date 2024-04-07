@@ -25,7 +25,11 @@ FileWalker create_file_walker(string file_path, bool create_header) {
     fw->header = new_header();
     write_header(fw->fp, fw->header);
   }
-  else fw->header = get_header(fw->fp);
+  else {
+    fw->header = get_header(fw->fp);
+    header_set_status_incon(fw->header);
+    fw_refresh_header(fw);
+  }
 
   fw->current_register = NULL;
 
@@ -36,6 +40,8 @@ void close_file_walker(FileWalker* fwp) {
   FileWalker fw = *fwp;
   
   free(fw->file_path);
+  header_set_status_con(fw->header);
+  fw_refresh_header(fw);
 
   if (fw->header != NULL) 
     erase_header(&fw->header);

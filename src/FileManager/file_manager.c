@@ -10,6 +10,7 @@ void fm_delete_file(FileManager fm, string file_name);
 
 void fm_create_file_walker(FileManager fm, string file_name, bool new_header);
 void fm_close_file_walker(FileManager fm);
+void fm_write_register_collection(FileManager fm, string file_name, RegisterCollection regcol);
 
 typedef struct file_manager_obj_ {
   string* file_name_registry;
@@ -56,7 +57,16 @@ void fm_create_empty_table(FileManager fm, string file_name) {
 void fm_insert_csv(FileManager fm, string file_name, string csv_path) {
   RegisterCollection regcol = csv_to_register_vector(csv_path);
   //debug_register_collection(regcol);
+  //
+  fm_write_register_collection(fm, file_name, regcol);
+  
   free_register_collection(&regcol);
+}
+
+void fm_write_register_collection(FileManager fm, string file_name, RegisterCollection regcol) {
+  fm_create_file_walker(fm, file_name, false);
+  fw_insert_all(fm->curr_fw, regcol);
+  fm_close_file_walker(fm);
 }
 
 void fm_create_file_walker(FileManager fm, string file_name, bool new_header) {

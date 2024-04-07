@@ -13,7 +13,7 @@ typedef header_obj* Header;
 Header new_header(void) {
   Header header = (Header) malloc(sizeof(header_obj)); 
 
-  header->status = 0;
+  header->status = '0';
   header->topo = -1;
   header->proxByteOffset = 0;
   header->nroRegArq = 0;
@@ -24,13 +24,22 @@ Header new_header(void) {
 
 Header get_header(FILE* fp) {
   Header header = (Header) malloc(sizeof(header_obj));
-  fread(header, sizeof(header_obj), 1, fp);
+  
+  fread(&header->status, sizeof(char),1,fp);
+  fread(&header->topo, sizeof(long int),1,fp);
+  fread(&header->proxByteOffset, sizeof(long int),1,fp);
+  fread(&header->nroRegArq, sizeof(int),1,fp);
+  fread(&header->nroRegRem, sizeof(int),1,fp);
 
   return header;
 }
 
 void write_header(FILE* fp, Header header) {
-  fwrite(header, sizeof(header_obj), 1, fp);
+  fwrite(&header->status, sizeof(char),1,fp);
+  fwrite(&header->topo, sizeof(long int),1,fp);
+  fwrite(&header->proxByteOffset, sizeof(long int),1,fp);
+  fwrite(&header->nroRegArq, sizeof(int),1,fp);
+  fwrite(&header->nroRegRem, sizeof(int),1,fp);
 }
 
 void header_increse_register_number(Header header, int number) {
@@ -39,6 +48,17 @@ void header_increse_register_number(Header header, int number) {
 
 void header_increse_offset_number(Header header, long int number) {
   header->proxByteOffset += number;
+}
+
+void header_set_status_incon(Header header) {
+  header->status = '0';
+}
+
+void header_set_status_con(Header header) {
+  header->status = '1';
+  // This is used to ignore byteoffset change
+  // as this function is called at the end of all file accesses
+  header->proxByteOffset = 0;
 }
 
 void erase_header(Header* headerp) {
