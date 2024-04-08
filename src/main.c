@@ -21,18 +21,18 @@ int main(void) {
     }
 
     if (c == '2') {
-      char* file_path = read_string();
+      char* file_name = read_string();
 
-      select_from(file_path, file_manager);
-      free(file_path);
+      select_from(file_name, file_manager);
+      free(file_name);
     }
 
     if (c == '3') {
-      char* file_path = read_string();
+      char* file_name = read_string();
       int search_quantity; scanf(" %d", &search_quantity);
 
-      select_from_where(file_path, search_quantity, file_manager);
-      free(file_path);
+      select_from_where(file_name, search_quantity, file_manager);
+      free(file_name);
     }
   }
 
