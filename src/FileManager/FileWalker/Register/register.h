@@ -29,3 +29,9 @@ Register read_register(FILE* fp);
 
 bool is_removed(Register reg);
 
+int get_id(Register reg);
+int get_idade(Register reg);
+string get_nome_jogador(Register reg);
+string get_nacionalidade(Register reg);
+string get_nome_clube(Register reg);
+

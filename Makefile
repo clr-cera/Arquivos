@@ -18,7 +18,7 @@ funcoes_fornecidas:
 file_manager: file_walker
 	gcc -c src/FileManager/*.c
 
-file_walker: header register
+file_walker: header register filter
 	gcc -c src/FileManager/FileWalker/*.c
 
 header:
@@ -26,6 +26,9 @@ header:
 
 register:
 	gcc -c src/FileManager/FileWalker/Register/*.c
+
+filter:
+	gcc -c src/FileManager/FileWalker/Filter/*.c
 
 clean:
 	rm -f *.o *.output *.zip

@@ -152,6 +152,26 @@ bool is_removed(Register reg) {
   return reg->removido == '1';
 }
 
+int get_id(Register reg) {
+  return reg->id;
+}
+
+int get_idade(Register reg) {
+  return reg->idade;
+}
+
+string get_nome_jogador(Register reg) {
+  return reg->nomeJogador;
+}
+
+string get_nacionalidade(Register reg) {
+  return reg->nacionalidade;
+}
+
+string get_nome_clube(Register reg) {
+  return reg->nomeClube;
+}
+
 
 Register csv_line_to_register(FILE* fp){
 

@@ -1,4 +1,5 @@
 #include "../Lib/lib.h"
+#include "FileWalker/Filter/filter.h"
 
 #define DATA_PATH "database/"
 
