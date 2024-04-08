@@ -55,7 +55,7 @@ void print_register(Register reg) {
 }
 
 void print_dinamic_field(int size, string str) {
-  if (size <= 0) {
+  if (size <= 0 || str == NULL) {
     printf("SEM DADO");
   }
   else {
@@ -133,7 +133,7 @@ void read_dinamic_field(string* string_field, int* string_size, FILE* fp) {
   if (*string_size > 0){
     *string_field = (string) malloc((*string_size+1)* sizeof(char));
     fread(*string_field, sizeof(char), *string_size, fp); 
-    *string_field[*string_size] = '\0';
+    (*string_field)[*string_size] = '\0';
   }
   else *string_field = NULL;
 }
@@ -146,6 +146,10 @@ void write_dinamic_field(string string_field, int string_size, FILE* fp) {
   if (string_size > 0)
     fwrite(string_field, sizeof(char), string_size, fp); 
 
+}
+
+bool is_removed(Register reg) {
+  return reg->removido == '1';
 }
 
 

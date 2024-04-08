@@ -1,6 +1,7 @@
 // register contém a struct do registro e funções relacionadas
 #include <stdio.h>
 #include "../../../Lib/lib.h"
+#include <stdbool.h>
 
 typedef struct register_* Register;
 
@@ -9,6 +10,7 @@ typedef struct register_collection_* RegisterCollection;
 void debug_register(Register reg);
 void debug_register_collection(RegisterCollection regcol);
 
+void print_register(Register reg);
 
 void free_register(Register* regp); 
 void free_register_collection(RegisterCollection* regcolp);
@@ -24,3 +26,6 @@ void write_register(FILE* fp, Register reg);
 long int write_register_collection(FILE* fp, RegisterCollection regcol);
 
 Register read_register(FILE* fp);
+
+bool is_removed(Register reg);
+

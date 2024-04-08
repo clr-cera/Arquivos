@@ -61,7 +61,12 @@ void header_set_status_con(Header header) {
   header->proxByteOffset = 0;
 }
 
+int get_reg_number(Header header) {
+  return header->nroRegArq;
+}
+
 void erase_header(Header* headerp) {
   free(*headerp);
   *headerp = NULL;
 }
+
