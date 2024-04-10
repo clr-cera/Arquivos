@@ -41,6 +41,7 @@ long int write_register_collection(FILE* fp, RegisterCollection regcol) {
 
 RegisterCollection csv_to_register_vector(string file_path){
   FILE* fp = fopen(file_path, "r");
+  if (fp == NULL) return NULL;
 
   //O primeiro registro é inválido, então ele é descartado
   while (1) 

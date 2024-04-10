@@ -8,7 +8,7 @@ void fm_insert_name_in_registry(FileManager fm, string file_name);
 void fm_create_file(FileManager fm, string file_name);
 void fm_delete_file(FileManager fm, string file_name);
 
-void fm_create_file_walker(FileManager fm, string file_name, bool new_header);
+int fm_create_file_walker(FileManager fm, string file_name, bool new_header);
 void fm_close_file_walker(FileManager fm);
 void fm_write_register_collection(FileManager fm, string file_name, RegisterCollection regcol);
 
@@ -54,13 +54,14 @@ void fm_create_empty_table(FileManager fm, string file_name) {
   fm_close_file_walker(fm);
 }
 
-void fm_insert_csv(FileManager fm, string file_name, string csv_path) {
+int fm_insert_csv(FileManager fm, string file_name, string csv_path) {
   RegisterCollection regcol = csv_to_register_vector(csv_path);
   //debug_register_collection(regcol);
-  //
+  if (regcol == NULL) return -1;
   fm_write_register_collection(fm, file_name, regcol);
   
   free_register_collection(&regcol);
+  return 1;
 }
 
 void fm_write_register_collection(FileManager fm, string file_name, RegisterCollection regcol) {
@@ -69,9 +70,11 @@ void fm_write_register_collection(FileManager fm, string file_name, RegisterColl
   fm_close_file_walker(fm);
 }
 
-void fm_create_file_walker(FileManager fm, string file_name, bool new_header) {
+int fm_create_file_walker(FileManager fm, string file_name, bool new_header) {
   string file_path = concat_string(DATA_PATH, file_name);
   fm->curr_fw = create_file_walker(file_path, new_header);
+  if (fm->curr_fw == NULL) return -1;
+  else return 1;
 }
 
 void fm_close_file_walker(FileManager fm) {
@@ -102,17 +105,26 @@ void fm_insert_name_in_registry(FileManager fm, string file_name) {
 }
 
 int fm_print_all(FileManager fm, string file_name) {
-  fm_create_file_walker(fm, file_name, false);
-  int counter = fw_print_all(fm->curr_fw);
-  fm_close_file_walker(fm);
+  int returnal;
+  returnal = fm_create_file_walker(fm, file_name, false);
 
-  return counter;
+  if (returnal != -1) {
+    returnal = fw_print_all(fm->curr_fw);
+    fm_close_file_walker(fm);
+  }
+
+  return returnal;
 }
 
 int fm_print_all_filter(FileManager fm, string file_name, Filter filter) {
-  fm_create_file_walker(fm, file_name, false);
-  int counter = fw_print_all_filter(fm->curr_fw, filter);
-  fm_close_file_walker(fm);
-  return counter;
+  int returnal;
+  returnal = fm_create_file_walker(fm, file_name, false);
+
+  if (returnal != -1){
+    returnal = fw_print_all_filter(fm->curr_fw, filter);
+    fm_close_file_walker(fm);
+  }
+
+  return returnal;
 }
 

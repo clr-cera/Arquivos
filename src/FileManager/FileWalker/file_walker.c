@@ -18,6 +18,10 @@ void fw_refresh_header(FileWalker fw);
 FileWalker create_file_walker(string file_path, bool create_header) {
   FileWalker fw = (FileWalker) malloc(sizeof(file_walker_obj));
   fw->fp = fopen(file_path, "rb+");
+  if (fw->fp == NULL) {
+    free(fw);
+    return NULL;
+  }
   
   fw->file_path = file_path;
 

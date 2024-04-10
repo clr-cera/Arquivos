@@ -12,18 +12,20 @@ int main(void) {
 
   // Parser da operação a ser realizada
   while (scanf(" %c", &c) != EOF){
+    int returnal = 0;
+
     if (c == '1') {
       char* input_path = read_string();
       char* output_name = read_string();
 
-      create_table(input_path, output_name, file_manager);
+      returnal = create_table(input_path, output_name, file_manager);
       free(input_path);
     }
 
     if (c == '2') {
       char* file_name = read_string();
 
-      select_from(file_name, file_manager);
+      returnal = select_from(file_name, file_manager);
       free(file_name);
     }
 
@@ -31,9 +33,12 @@ int main(void) {
       char* file_name = read_string();
       int search_quantity; scanf(" %d", &search_quantity);
 
-      select_from_where(file_name, search_quantity, file_manager);
+      returnal = select_from_where(file_name, search_quantity, file_manager);
       free(file_name);
     }
+
+    if (returnal == -1)
+      printf("Falha no processamento do arquivo.\n");
   }
 
   erase_file_manager(&file_manager);
