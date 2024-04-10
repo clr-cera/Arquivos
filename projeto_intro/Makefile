@@ -1,5 +1,5 @@
 all: main lib operations file_manager funcoes_fornecidas
-	gcc -I. *.o -o main.output -std=c99 -Wall -lmd
+	gcc -I. *.o -o main.output -Wall
 	rm -f *.o
  
 main:

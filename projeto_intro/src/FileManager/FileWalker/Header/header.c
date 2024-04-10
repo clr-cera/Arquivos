@@ -15,7 +15,7 @@ Header new_header(void) {
 
   header->status = '0';
   header->topo = -1;
-  header->proxByteOffset = 0;
+  header->proxByteOffset = 26;
   header->nroRegArq = 0;
   header->nroRegRem = 0;
 
@@ -56,9 +56,6 @@ void header_set_status_incon(Header header) {
 
 void header_set_status_con(Header header) {
   header->status = '1';
-  // This is used to ignore byteoffset change
-  // as this function is called at the end of all file accesses
-  header->proxByteOffset = 0;
 }
 
 int get_reg_number(Header header) {
