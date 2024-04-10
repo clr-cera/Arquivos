@@ -6,6 +6,7 @@ int create_table(string input_path, string output_name, FileManager fm) {
   fm_create_empty_table(fm, output_name);
   int returnal = fm_insert_csv(fm, output_name, input_path);
 
+  // Se for -1, o csv não existe e por isso não pode ser inserido
   if (returnal != -1) {
     string binario_path = concat_string(DATA_PATH, output_name); 
     binarioNaTela(binario_path);

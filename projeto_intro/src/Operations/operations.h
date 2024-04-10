@@ -5,6 +5,8 @@
 //Este header é responsável pra ser usado como interface com todas 
 //as possíveis operações
 
+//Operações devem retornar -1 para a main caso tentem acessar um arquivo que não existe
+
 int create_table(char* input_path, char* output_name, FileManager fm);
 
 int select_from(char* file_name, FileManager fm);
