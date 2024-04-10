@@ -42,6 +42,8 @@ void debug_register(Register reg) {
 }
 
 void print_register(Register reg) {
+  //printf("id: %d\nidade: %d\n", reg->id, reg->idade); // DEBUG
+  
   printf("Nome do Jogador: ");
   print_dinamic_field(reg->tamNomeJog, reg->nomeJogador);
 

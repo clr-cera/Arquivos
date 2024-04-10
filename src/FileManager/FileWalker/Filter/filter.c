@@ -51,12 +51,11 @@ void print_filter(Filter filter) {
     printf("Nome do Clube: %s\n", filter->nomeClube);
 }
 
-Filter read_filter() {
+Filter read_filter(int m) {
   Filter filter = new_filter();
   string type = NULL;
-  char test;
 
-  while(true){
+  for (int i = 0; i < m; i++){
     type = (string) malloc(50*sizeof(char));
     scanf(" %s", type);
 
@@ -79,12 +78,8 @@ Filter read_filter() {
       scan_quote_string(filter->nomeClube);
     }
     free(type);
-
-    scanf("%c", &test);
-    if (test == '\n') {
-      return filter;
-    }
   }
+  return filter;
 }
 
 bool check_register(Register reg, Filter filter) {
@@ -92,22 +87,22 @@ bool check_register(Register reg, Filter filter) {
   if (filter->id != -1) a = get_id(reg) == filter->id;
   
   bool b = true;
-  if (filter->idade != 1) b = get_idade(reg) == filter->idade;
+  if (filter->idade != -1) b = get_idade(reg) == filter->idade;
 
   bool c = true;
   if (filter->nomeJogador != NULL) c = filter_string(get_nome_jogador(reg), filter->nomeJogador);
 
   bool d = true;
-  if (filter->nacionalidade != NULL) c = filter_string(get_nacionalidade(reg), filter->nacionalidade);
+  if (filter->nacionalidade != NULL) d = filter_string(get_nacionalidade(reg), filter->nacionalidade);
   
   bool e = true;
-  if (filter->nomeClube != NULL) c = filter_string(get_nome_clube(reg), filter->nomeClube);
+  if (filter->nomeClube != NULL) e = filter_string(get_nome_clube(reg), filter->nomeClube);
 
 
   return a&&b&&c&&d&&e;
 }
 
-// TODO make filter_string
+// TODO test filter_string
 bool filter_string(string reg_string, string filter_string) {
   if (reg_string == NULL)
     return false;

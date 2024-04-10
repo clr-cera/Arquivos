@@ -101,8 +101,18 @@ void fm_insert_name_in_registry(FileManager fm, string file_name) {
   fm->file_number+=1;
 }
 
-void fm_print_all(FileManager fm, string file_name) {
+int fm_print_all(FileManager fm, string file_name) {
   fm_create_file_walker(fm, file_name, false);
-  fw_print_all(fm->curr_fw);
+  int counter = fw_print_all(fm->curr_fw);
   fm_close_file_walker(fm);
+
+  return counter;
 }
+
+int fm_print_all_filter(FileManager fm, string file_name, Filter filter) {
+  fm_create_file_walker(fm, file_name, false);
+  int counter = fw_print_all_filter(fm->curr_fw, filter);
+  fm_close_file_walker(fm);
+  return counter;
+}
+

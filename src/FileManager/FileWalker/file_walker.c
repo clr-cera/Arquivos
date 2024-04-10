@@ -64,19 +64,44 @@ void fw_insert_all(FileWalker fw, RegisterCollection regcol) {
   fw_refresh_header(fw);
 }
 
-void fw_print_all(FileWalker fw) {
-    
+int fw_print_all(FileWalker fw) {
+  
   long int initial_pos = ftell(fw->fp);
   fseek(fw->fp, 0, SEEK_END);
   long int final_pos = ftell(fw->fp);
   fseek(fw->fp, initial_pos, SEEK_SET);
 
+  int counter = 0;
+
   while(ftell(fw->fp) != final_pos){
     Register reg = read_register(fw->fp);
-    if(!is_removed(reg)) 
+    if(!is_removed(reg)) {
       print_register(reg);
+      counter++;
+    }
     free_register(&reg);
   }
+  return counter;
+}
+
+int fw_print_all_filter(FileWalker fw, Filter filter) {
+  long int initial_pos = ftell(fw->fp);
+  fseek(fw->fp, 0, SEEK_END);
+  long int final_pos = ftell(fw->fp);
+  fseek(fw->fp, initial_pos, SEEK_SET);
+
+  int counter = 0;
+
+  while(ftell(fw->fp) != final_pos){
+    Register reg = read_register(fw->fp);
+    if(!is_removed(reg) && check_register(reg, filter)){
+      print_register(reg);
+      counter+=1;
+    }
+    free_register(&reg);
+  }
+
+  return counter;
 }
 
 void fw_refresh_header(FileWalker fw) {

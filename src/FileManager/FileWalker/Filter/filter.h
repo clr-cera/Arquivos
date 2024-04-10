@@ -10,6 +10,6 @@ Filter new_filter();
 void erase_filter(Filter* filterp);
 void print_filter(Filter filter);
 
-Filter read_filter();
+Filter read_filter(int m);
 bool check_register(Register reg, Filter filter);
 
