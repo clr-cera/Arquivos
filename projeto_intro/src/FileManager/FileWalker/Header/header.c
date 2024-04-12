@@ -15,7 +15,7 @@ Header new_header(void) {
 
   header->status = '0';
   header->topo = -1;
-  header->proxByteOffset = 26;
+  header->proxByteOffset = 25;
   header->nroRegArq = 0;
   header->nroRegRem = 0;
 
