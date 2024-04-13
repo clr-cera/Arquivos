@@ -14,6 +14,7 @@ int main(void) {
   while (scanf(" %c", &c) != EOF){
     int returnal = 0;
 
+    //Operação 1
     if (c == '1') {
       char* input_path = read_string();
       char* output_name = read_string();
@@ -22,6 +23,7 @@ int main(void) {
       free(input_path);
     }
 
+    //Operação 2
     if (c == '2') {
       char* file_name = read_string();
 
@@ -29,6 +31,7 @@ int main(void) {
       free(file_name);
     }
 
+    //Operação 3
     if (c == '3') {
       char* file_name = read_string();
       int search_quantity; scanf(" %d", &search_quantity);

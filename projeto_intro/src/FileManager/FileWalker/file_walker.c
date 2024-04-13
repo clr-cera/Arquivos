@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//Responsável pela manipulação interna de um arquivo
 typedef struct file_walker_ {
   string file_path;
   FILE* fp;
@@ -15,6 +16,7 @@ typedef file_walker_obj* FileWalker;
 
 void fw_refresh_header(FileWalker fw);
 
+//Inicializa um File Walker e o associa ao arquivo file_path
 FileWalker create_file_walker(string file_path, bool create_header) {
   FileWalker fw = (FileWalker) malloc(sizeof(file_walker_obj));
   fw->fp = fopen(file_path, "rb+");
@@ -40,6 +42,7 @@ FileWalker create_file_walker(string file_path, bool create_header) {
   return fw;
 }
 
+//Encerra um file walker, liberando memória
 void close_file_walker(FileWalker* fwp) {
   FileWalker fw = *fwp;
   
@@ -58,6 +61,7 @@ void close_file_walker(FileWalker* fwp) {
   *fwp = NULL;
 }
 
+//Insere todos os registros de um vetor de registro no arquivo associado ao File Walker
 void fw_insert_all(FileWalker fw, RegisterCollection regcol) {
   long int input_offset = write_register_collection(fw->fp, regcol);
   int input_quantity = size_register_collection(regcol);
@@ -68,6 +72,7 @@ void fw_insert_all(FileWalker fw, RegisterCollection regcol) {
   fw_refresh_header(fw);
 }
 
+//Imprime todos os registros dentro do arquivo associado ao File Walker
 int fw_print_all(FileWalker fw) {
   
   long int initial_pos = ftell(fw->fp);
@@ -88,6 +93,7 @@ int fw_print_all(FileWalker fw) {
   return counter;
 }
 
+//Imprime todos os registros dentro do arquivo associado ao File Walker que respeitem as condições de um dado filtro
 int fw_print_all_filter(FileWalker fw, Filter filter) {
   long int initial_pos = ftell(fw->fp);
   fseek(fw->fp, 0, SEEK_END);
@@ -108,6 +114,7 @@ int fw_print_all_filter(FileWalker fw, Filter filter) {
   return counter;
 }
 
+//Lê o header do arquivo associado ao file walker o guarda no file walker
 void fw_refresh_header(FileWalker fw) {
   int initial_position = ftell(fw->fp);
   fseek(fw->fp, 0, SEEK_SET);
@@ -116,6 +123,7 @@ void fw_refresh_header(FileWalker fw) {
 
 }
 
+//Insere um único registro no arquivo associado ao File Walker
 void fw_insert(FileWalker fw, Register reg) {
   write_register(fw->fp, reg);
 }

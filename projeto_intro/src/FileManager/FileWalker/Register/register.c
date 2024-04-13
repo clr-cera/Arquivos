@@ -28,6 +28,7 @@ void write_dinamic_field(string string_field, int string_size, FILE* fp);
 void debug_dinamic_field(int size, string str);
 void print_dinamic_field(int size, string str);
 
+//Utilizado apenas para fins de testes
 void debug_register(Register reg) {
   printf("id: %d\nidade: %d\n", reg->id, reg->idade);
 
@@ -41,6 +42,7 @@ void debug_register(Register reg) {
   debug_dinamic_field(reg->tamNomeClube, reg->nomeClube);
 }
 
+//Imprime as informações de um registro
 void print_register(Register reg) {
   //printf("id: %d\nidade: %d\n", reg->id, reg->idade); // DEBUG
   
@@ -56,6 +58,7 @@ void print_register(Register reg) {
   printf("\n");
 }
 
+//Imprime um campo de tamanho dinâmico do registro
 void print_dinamic_field(int size, string str) {
   if (size <= 0 || str == NULL) {
     printf("SEM DADO");
@@ -67,6 +70,7 @@ void print_dinamic_field(int size, string str) {
   printf("\n");
 }
 
+//Utilizado apenas para fins de testes
 void debug_dinamic_field(int size, string str) {
   printf("%d ",size);
   for (int i =0; i < size; i ++)
@@ -74,6 +78,7 @@ void debug_dinamic_field(int size, string str) {
   printf("\n");
 }
 
+//Apaga um registro, liberando memória
 void free_register(Register* regp) {
   Register reg= *regp;
   if (reg==NULL) return;
@@ -91,10 +96,12 @@ void free_register(Register* regp) {
   *regp = NULL;
 }
 
+//Retorna o tamanho de um dado registro
 long int get_register_tamanho(Register reg) {
   return reg->tamanhoRegistro;
 }
 
+//Escreve o registro em um arquivo binário
 void write_register(FILE* fp, Register reg) {
   fwrite(&(reg->removido), sizeof(char), 1, fp);
   fwrite(&(reg->tamanhoRegistro), sizeof(int), 1, fp);
@@ -109,6 +116,7 @@ void write_register(FILE* fp, Register reg) {
   write_dinamic_field(reg->nomeClube, reg->tamNomeClube, fp);
 }
 
+//Lê um registro de um arquivo binário
 Register read_register(FILE* fp) {
   Register reg = (Register) malloc(sizeof(register_obj));
 
@@ -127,6 +135,7 @@ Register read_register(FILE* fp) {
   return reg;
 }
 
+//Lê um campo de tamanho dinâmico de um arquivo binário
 void read_dinamic_field(string* string_field, int* string_size, FILE* fp) {
   // ler tamanho
   fread(string_size, sizeof(int), 1, fp);
@@ -140,6 +149,7 @@ void read_dinamic_field(string* string_field, int* string_size, FILE* fp) {
   else *string_field = NULL;
 }
 
+//Escreve um campo de tamanho dinâmico em um arquivo binário
 void write_dinamic_field(string string_field, int string_size, FILE* fp) {
   // escreve tamanho
   fwrite(&string_size, sizeof(int), 1, fp);
@@ -150,31 +160,37 @@ void write_dinamic_field(string string_field, int string_size, FILE* fp) {
 
 }
 
+//Retorna se o registro consta como removido ou não
 bool is_removed(Register reg) {
   return reg->removido == '1';
 }
 
+//Retorna o ID do registro
 int get_id(Register reg) {
   return reg->id;
 }
 
+//Retorna a idade do jogador no registro
 int get_idade(Register reg) {
   return reg->idade;
 }
 
+//Retorna o nome do jogador no registro
 string get_nome_jogador(Register reg) {
   return reg->nomeJogador;
 }
 
+//Retorna a nacionalidade do jogador no registro
 string get_nacionalidade(Register reg) {
   return reg->nacionalidade;
 }
 
+//Retorna o nome do clube do jogador no registro
 string get_nome_clube(Register reg) {
   return reg->nomeClube;
 }
 
-
+//Lê uma linha de um dado arquivo csv e a converte para um registro
 Register csv_line_to_register(FILE* fp){
 
   Register line = malloc(sizeof(register_obj));

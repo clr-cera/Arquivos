@@ -11,7 +11,6 @@ int select_from_where(char* file_name, int search_quantity, FileManager fm) {
 
     scanf("%d", &m);
     filter = read_filter(m);
-    //print_filter(filter); //DEBUG
     
     counter = fm_print_all_filter(fm, file_name, filter);
     // Se for -1, o arquivo não existe

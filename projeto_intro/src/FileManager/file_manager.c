@@ -29,7 +29,7 @@ FileManager create_file_manager(void) {
   return fm;
 }
 
-
+//Apaga o file manager liberando memória
 void erase_file_manager(FileManager* fmp) {
   FileManager fm = *fmp;
 
@@ -46,6 +46,7 @@ void erase_file_manager(FileManager* fmp) {
   *fmp = NULL;
 }
 
+//Cria uma table vazia
 void fm_create_empty_table(FileManager fm, string file_name) {
   fm_insert_name_in_registry(fm, file_name);
   fm_create_file(fm, file_name);
@@ -54,6 +55,7 @@ void fm_create_empty_table(FileManager fm, string file_name) {
   fm_close_file_walker(fm);
 }
 
+//Chama a função de transformar o arquivo csv em um vetor de registros e passa esse vetor de registros para ser inserido em um arquivo binário com nome "file_name"
 int fm_insert_csv(FileManager fm, string file_name, string csv_path) {
   RegisterCollection regcol = csv_to_register_vector(csv_path);
   //debug_register_collection(regcol);
@@ -64,12 +66,14 @@ int fm_insert_csv(FileManager fm, string file_name, string csv_path) {
   return 1;
 }
 
+//Tendo recebido o vetor de registros, o utiliza para chamar as funções necessárias para inserir os registros no arquivo binário "file_name"
 void fm_write_register_collection(FileManager fm, string file_name, RegisterCollection regcol) {
   fm_create_file_walker(fm, file_name, false);
   fw_insert_all(fm->curr_fw, regcol);
   fm_close_file_walker(fm);
 }
 
+//cria um File Walker e o associa ao File Manager
 int fm_create_file_walker(FileManager fm, string file_name, bool new_header) {
   string file_path = concat_string(DATA_PATH, file_name);
   fm->curr_fw = create_file_walker(file_path, new_header);
@@ -77,10 +81,12 @@ int fm_create_file_walker(FileManager fm, string file_name, bool new_header) {
   else return 1;
 }
 
+//Fecha o file walker associado a um dado File Manager
 void fm_close_file_walker(FileManager fm) {
   close_file_walker(&fm->curr_fw);
 }
 
+//Cria um arquivo binário de nome "file_name"
 void fm_create_file(FileManager fm, string file_name) {
   string file_path = concat_string(DATA_PATH, file_name);
 
@@ -88,6 +94,7 @@ void fm_create_file(FileManager fm, string file_name) {
   free(file_path);
 }
 
+//deleta um arquivo de nome "file_name"
 void fm_delete_file(FileManager fm, string file_name) {
   string file_path = concat_string(DATA_PATH, file_name);
   
@@ -95,6 +102,7 @@ void fm_delete_file(FileManager fm, string file_name) {
   free(file_path);
 }
 
+//Insere um novo arquivo no file manager
 void fm_insert_name_in_registry(FileManager fm, string file_name) {
   if (fm->file_number != 0 && (fm->file_number % 5) == 0) {
     fm->file_name_registry = (string *) realloc(fm->file_name_registry,(fm->file_number+5) * sizeof(string));
@@ -104,6 +112,7 @@ void fm_insert_name_in_registry(FileManager fm, string file_name) {
   fm->file_number+=1;
 }
 
+//Imprime todos os registros associados a um file manager
 int fm_print_all(FileManager fm, string file_name) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, false);
@@ -116,6 +125,7 @@ int fm_print_all(FileManager fm, string file_name) {
   return returnal;
 }
 
+//Imprime todos os registros associados a um file manager que respeitem as condições de um dado filtro
 int fm_print_all_filter(FileManager fm, string file_name, Filter filter) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, false);

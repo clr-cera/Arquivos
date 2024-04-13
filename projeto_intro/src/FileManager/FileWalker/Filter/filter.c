@@ -1,6 +1,7 @@
 #include "filter.h"
 #include <string.h>
 
+//Struct filter serve para comparar com registros e verificar se os registros respeitam as condições do filtro
 typedef struct filter_{
   int id;
   int idade;
@@ -13,6 +14,7 @@ typedef filterObj* Filter;
 bool filter_string(string reg_string, string filter_string);
 string read_filter_type();
 
+//Cria um filtro vazio
 Filter new_filter() {
   Filter filter = (Filter) malloc(sizeof(filterObj));
   
@@ -25,6 +27,7 @@ Filter new_filter() {
   return filter;
 }
 
+//Apaga um filtro, liberando memória
 void erase_filter(Filter* filterp) {
   Filter filter = *filterp;
   if (filter->nomeJogador != NULL)
@@ -40,6 +43,7 @@ void erase_filter(Filter* filterp) {
   *filterp = NULL;
 }
 
+//Imprime os campos de um dado filtro (utilizado apenas para fins de testes)
 void print_filter(Filter filter) {
   printf("id: %d\n", filter->id);
   printf("idade: %d\n", filter->idade);
@@ -51,6 +55,7 @@ void print_filter(Filter filter) {
     printf("Nome do Clube: %s\n", filter->nomeClube);
 }
 
+//Lê m campos do teclado e os aplica como condições no filtro
 Filter read_filter(int m) {
   Filter filter = new_filter();
   string type = NULL;
@@ -82,6 +87,7 @@ Filter read_filter(int m) {
   return filter;
 }
 
+//Compara um registro com um filtro e retorna se o registro passa no filtro ou não
 bool check_register(Register reg, Filter filter) {
   bool a = true;
   if (filter->id != -1) a = get_id(reg) == filter->id;
@@ -102,7 +108,7 @@ bool check_register(Register reg, Filter filter) {
   return a&&b&&c&&d&&e;
 }
 
-// TODO test filter_string
+//Compara duas strings, uma do registro e outra do filtro
 bool filter_string(string reg_string, string filter_string) {
   if (reg_string == NULL)
     return false;

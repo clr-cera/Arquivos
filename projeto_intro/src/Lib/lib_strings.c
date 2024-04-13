@@ -1,7 +1,8 @@
 #include "lib.h"
 #include <stdlib.h>
-
 // lib_strings é responsável por conter funções relacionadas a strings
+
+//Lê uma string do teclado
 string read_string(void) {
   string str = (char *) malloc(50*sizeof(char));
   scanf(" %s", str);
@@ -9,7 +10,7 @@ string read_string(void) {
   return str;
 }
 
-
+//Dada uma string terminada em \0, retorna seu tamanho
 int string_len(string str) {
   int sum = 0;
   for(int i = 0;;i++){
@@ -17,6 +18,8 @@ int string_len(string str) {
     sum++;
   }  
 }
+
+//Concatena 2 strings
 string concat_string(string s1, string s2) {
   int len1 = string_len(s1);
   int len2 = string_len(s2);
@@ -39,6 +42,9 @@ string concat_string(string s1, string s2) {
   return str;
 }
 
+
+//Dado um número escrito em base 10 em uma string, retorna o número como um inteiro. 
+//Ao mesmo tempo, avança o inteiro start para que quem chamou a função possa continuar a leitura imediatamente depois do número acabar.
 int string_to_int(char* str, int* start){
   int number = 0;
   for(; str[*start] > 47 && str[*start] < 58; (*start)++){
@@ -49,6 +55,7 @@ int string_to_int(char* str, int* start){
   return number / 10;
 }
 
+//Calcula a distancia em uma string da posição start até a posição contendo o caracter target
 int dist_to_target(char* str, int start, char target){
   int dist = 0;
   for(int i = start; str[i] != target; i++){
@@ -59,6 +66,8 @@ int dist_to_target(char* str, int start, char target){
   return dist;
 }
 
+
+//Cria uma nova string com os próximos "size" caracteres da string original
 char* string_slicer(char* str, int start, int size){
   char* new_string = malloc(size * sizeof(char));
   for(int i = 0; i < size; i++){
@@ -67,6 +76,7 @@ char* string_slicer(char* str, int start, int size){
   return new_string;
 }
 
+//Conta quantas linhas um arquivo possui e retorna o ponteiro do arquivo para a posição inicial
 int count_lines(FILE* fp){
   int counter = 0;
   int initial_position = ftell(fp);
