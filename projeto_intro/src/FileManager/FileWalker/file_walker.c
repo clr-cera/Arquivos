@@ -107,6 +107,11 @@ int fw_print_all_filter(FileWalker fw, Filter filter) {
     if(!is_removed(reg) && check_register(reg, filter)){
       print_register(reg);
       counter+=1;
+      // Se apenas um registro for permitido para esse filtro, a busca para
+      if (filter_unique(filter)){
+        free_register(&reg);
+        break;
+      }
     }
     free_register(&reg);
   }

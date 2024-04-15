@@ -115,3 +115,9 @@ bool filter_string(string reg_string, string filter_string) {
 
   return strcmp(reg_string, filter_string) == 0;
 }
+
+// Retorna true se o filtro apenas permitir passar um registro
+bool filter_unique(Filter filter) {
+  return filter->id != -1;
+}
+
