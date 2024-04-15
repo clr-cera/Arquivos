@@ -42,7 +42,7 @@ FileWalker create_file_walker(string file_path, bool create_header) {
   return fw;
 }
 
-//Encerra um file walker, liberando memória
+//Encerra um file walker, liberando memória e fechando o arquivo com fclose
 void close_file_walker(FileWalker* fwp) {
   FileWalker fw = *fwp;
   
@@ -114,7 +114,7 @@ int fw_print_all_filter(FileWalker fw, Filter filter) {
   return counter;
 }
 
-//Lê o header do arquivo associado ao file walker o guarda no file walker
+// Atualiza o header do arquivo com os dados do header do FileWalker
 void fw_refresh_header(FileWalker fw) {
   int initial_position = ftell(fw->fp);
   fseek(fw->fp, 0, SEEK_SET);

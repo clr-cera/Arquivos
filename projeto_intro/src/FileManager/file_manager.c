@@ -20,6 +20,7 @@ typedef struct file_manager_obj_ {
 
 typedef file_manager_obj* FileManager;
 
+// Retorna um File Manager sem registro de arquivos
 FileManager create_file_manager(void) {
   FileManager fm = (FileManager) malloc(sizeof(file_manager_obj));
   fm->file_number = 0;
@@ -46,7 +47,7 @@ void erase_file_manager(FileManager* fmp) {
   *fmp = NULL;
 }
 
-//Cria uma table vazia
+//Cria um arquivo vazio
 void fm_create_empty_table(FileManager fm, string file_name) {
   fm_insert_name_in_registry(fm, file_name);
   fm_create_file(fm, file_name);
@@ -86,7 +87,7 @@ void fm_close_file_walker(FileManager fm) {
   close_file_walker(&fm->curr_fw);
 }
 
-//Cria um arquivo binário de nome "file_name"
+//Cria um arquivo binário de nome "file_name" no diretório "DATA_PATH"
 void fm_create_file(FileManager fm, string file_name) {
   string file_path = concat_string(DATA_PATH, file_name);
 
@@ -94,7 +95,7 @@ void fm_create_file(FileManager fm, string file_name) {
   free(file_path);
 }
 
-//deleta um arquivo de nome "file_name"
+//deleta um arquivo de nome "file_name" no diretório "DATA_PATH"
 void fm_delete_file(FileManager fm, string file_name) {
   string file_path = concat_string(DATA_PATH, file_name);
   
@@ -102,7 +103,7 @@ void fm_delete_file(FileManager fm, string file_name) {
   free(file_path);
 }
 
-//Insere um novo arquivo no file manager
+//Insere um novo arquivo no registro do file manager
 void fm_insert_name_in_registry(FileManager fm, string file_name) {
   if (fm->file_number != 0 && (fm->file_number % 5) == 0) {
     fm->file_name_registry = (string *) realloc(fm->file_name_registry,(fm->file_number+5) * sizeof(string));
@@ -112,7 +113,7 @@ void fm_insert_name_in_registry(FileManager fm, string file_name) {
   fm->file_number+=1;
 }
 
-//Imprime todos os registros associados a um file manager
+//Imprime todos os registros no arquivo informado
 int fm_print_all(FileManager fm, string file_name) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, false);
@@ -125,7 +126,7 @@ int fm_print_all(FileManager fm, string file_name) {
   return returnal;
 }
 
-//Imprime todos os registros associados a um file manager que respeitem as condições de um dado filtro
+//Imprime todos os registros no arquivo informado que respeitem as condições de um dado filtro
 int fm_print_all_filter(FileManager fm, string file_name, Filter filter) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, false);

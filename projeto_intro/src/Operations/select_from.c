@@ -2,6 +2,7 @@
 
 // Operação de número 2
 
+// Essa operação imprime todos os registros do arquivo informado
 int select_from(char* file_name, FileManager fm) {
   int counter = fm_print_all(fm, file_name);
   // Se for 0, nenhum registro foi encontrado
