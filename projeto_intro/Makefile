@@ -40,4 +40,4 @@ test:
 	./main.output < ./tests/caso1.in
 	
 zip:
-	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.out' '*.txt' '*.bin' '*.csv'
+	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.out' '*.txt' '*.bin' '*.csv' '*.mp4'
