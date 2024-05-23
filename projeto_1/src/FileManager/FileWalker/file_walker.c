@@ -2,7 +2,6 @@
 #include "Header/header.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "../IndexWalker/Index/index.h"
 
 //Responsável pela manipulação interna de um arquivo
 typedef struct file_walker_ {
@@ -86,12 +85,16 @@ int fw_print_all(FileWalker fw) {
   while(ftell(fw->fp) != final_pos){
     Register reg = read_register(fw->fp);
     if(!is_removed(reg)) {
-      print_register(reg);
+      debug_register(reg);
       counter++;
     }
     free_register(&reg);
   }
   return counter;
+}
+
+int fw_get_reg_number(FileWalker fw) {
+  return get_reg_number(fw->header);
 }
 
 //Imprime todos os registros dentro do arquivo associado ao File Walker que respeitem as condições de um dado filtro

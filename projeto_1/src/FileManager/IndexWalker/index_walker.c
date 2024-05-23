@@ -59,7 +59,7 @@ void close_index_walker(IndexWalker* iwp) {
   *iwp = NULL;
 }
 
-void insert_all_index(IndexWalker iw, Index* vector, int size) {
+void iw_insert_all_index(IndexWalker iw, Index* vector, int size) {
   for(int i = 0; i < size; i++) {
     write_index(iw->index_fp, vector[i]);
   }
@@ -74,12 +74,16 @@ long int search_offset(IndexWalker iw, int id) {
 
   while(ftell(iw->index_fp) < final_position) {
     Index index = read_index(iw->index_fp);
-    if(get_index_id(index) == id) {
+    int curr_id = get_index_id(index);
+    if(curr_id == id) {
       long int offset = get_index_offset(index);
       erase_index(&index);
       return offset;      
     }
     erase_index(&index);
+
+    if (curr_id > id) 
+      break;
   }
   return -1;
 }

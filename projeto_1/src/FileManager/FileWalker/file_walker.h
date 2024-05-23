@@ -2,6 +2,7 @@
 #include "../../Lib/lib.h"
 #include "Register/register.h"
 #include "Filter/filter.h"
+#include "../IndexWalker/Index/index.h"
 #include <stdbool.h>
 
 typedef struct file_walker_* FileWalker;
@@ -14,4 +15,8 @@ void fw_insert(FileWalker fw, Register reg);
 
 int fw_print_all(FileWalker fw);
 int fw_print_all_filter(FileWalker fw, Filter filter);
+Index* data_to_index_vector(FileWalker fw);
+
+
+int fw_get_reg_number(FileWalker fw);
 

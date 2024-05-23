@@ -15,7 +15,7 @@ operations:
 funcoes_fornecidas:
 	gcc -c src/Funcoes_fornecidas/*.c
 
-file_manager: file_walker
+file_manager: file_walker index_walker
 	gcc -c src/FileManager/*.c
 
 file_walker: header register filter
@@ -29,6 +29,15 @@ register:
 
 filter:
 	gcc -c src/FileManager/FileWalker/Filter/*.c
+
+index_walker: index index_header
+	gcc -c src/FileManager/IndexWalker/*.c
+
+index:
+	gcc -c src/FileManager/IndexWalker/Index/*.c
+
+index_header:
+	gcc -c src/FileManager/IndexWalker/IndexHeader/*.c
 
 clean:
 	rm -f *.o *.output *.zip

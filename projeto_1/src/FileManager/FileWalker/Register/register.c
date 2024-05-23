@@ -30,6 +30,8 @@ void print_dinamic_field(int size, string str);
 
 //Utilizado apenas para fins de testes
 void debug_register(Register reg) {
+  printf("tam: %d\n", reg->tamanhoRegistro);
+
   printf("id: %d\nidade: %d\n", reg->id, reg->idade);
 
   printf("nome jogador: ");

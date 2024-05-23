@@ -40,6 +40,14 @@ int main(void) {
       free(file_name);
     }
 
+    //Operação 4
+    if (c == '4') {
+      char* data_file_name = read_string();
+      char* index_file_name = read_string();
+
+      returnal = create_index_file(data_file_name, index_file_name, file_manager);
+    }
+
     if (returnal == -1)
       printf("Falha no processamento do arquivo.\n");
   }

@@ -1,4 +1,5 @@
 #include "FileWalker/file_walker.h"
+#include "IndexWalker/index_walker.h"
 #include "file_manager.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,10 +13,14 @@ int fm_create_file_walker(FileManager fm, string file_name, bool new_header);
 void fm_close_file_walker(FileManager fm);
 void fm_write_register_collection(FileManager fm, string file_name, RegisterCollection regcol);
 
+int fm_create_index_walker(FileManager fm, string file_name, bool new_header);
+void fm_close_index_walker(FileManager fm);
+
 typedef struct file_manager_obj_ {
   string* file_name_registry;
   int file_number;
   FileWalker curr_fw;
+  IndexWalker curr_iw;
 }file_manager_obj;
 
 typedef file_manager_obj* FileManager;
@@ -47,13 +52,34 @@ void erase_file_manager(FileManager* fmp) {
   *fmp = NULL;
 }
 
-//Cria um arquivo vazio
+//Cria um arquivo de dados vazio
 void fm_create_empty_table(FileManager fm, string file_name) {
   fm_insert_name_in_registry(fm, file_name);
   fm_create_file(fm, file_name);
 
   fm_create_file_walker(fm, file_name, true); 
   fm_close_file_walker(fm);
+}
+
+//Cria um arquivo de índice vazio
+void fm_create_empty_index(FileManager fm, string file_name) {
+  fm_insert_name_in_registry(fm, file_name);
+  fm_create_file(fm, file_name);
+
+  fm_create_index_walker(fm, file_name, true); 
+  fm_close_index_walker(fm);
+}
+
+int fm_create_index_walker(FileManager fm, string file_name, bool new_header) {
+  string file_path = concat_string(DATA_PATH, file_name);
+  fm->curr_iw = create_index_walker(file_path, new_header);
+  if (fm->curr_iw == NULL) return -1;
+  else return 1;
+}
+
+//Fecha o file walker associado a um dado File Manager
+void fm_close_index_walker(FileManager fm) {
+  close_index_walker(&fm->curr_iw);
 }
 
 //Chama a função de transformar o arquivo csv em um vetor de registros e passa esse vetor de registros para ser inserido em um arquivo binário com nome "file_name"
@@ -113,6 +139,17 @@ void fm_insert_name_in_registry(FileManager fm, string file_name) {
   fm->file_number+=1;
 }
 
+int fm_get_reg_number(FileManager fm, string data_file_name) {
+  int returnal = fm_create_file_walker(fm, data_file_name, false);
+
+  if(returnal != -1) {
+    returnal = fw_get_reg_number(fm->curr_fw);
+    fm_close_file_walker(fm);
+  }
+
+  return returnal;
+}
+
 //Imprime todos os registros no arquivo informado
 int fm_print_all(FileManager fm, string file_name) {
   int returnal;
@@ -139,3 +176,37 @@ int fm_print_all_filter(FileManager fm, string file_name, Filter filter) {
   return returnal;
 }
 
+Index* fm_get_index_vector(FileManager fm,string data_file_name){
+  int returnal = fm_create_file_walker(fm, data_file_name, false);
+
+  if (returnal == -1)
+    return NULL;
+
+  Index* vector = data_to_index_vector(fm->curr_fw); 
+
+  return vector;
+}
+
+int fm_insert_all_index(FileManager fm, string index_file_name, Index* vector, int size) {
+  int returnal = fm_create_index_walker(fm, index_file_name, false);
+
+  if(returnal == -1)
+    return returnal;
+
+  iw_insert_all_index(fm->curr_iw, vector, size);
+  fm_close_index_walker(fm);
+
+  return 1;
+}
+
+long int fm_get_offset_by_id(FileManager fm, string index_file_name, int id) {
+  long int returnal = fm_create_index_walker(fm, index_file_name, false);
+
+  if(returnal == -1)
+    return returnal;
+
+  returnal = search_offset(fm->curr_iw, id);
+  fm_close_index_walker(fm);
+
+  return returnal;
+}
