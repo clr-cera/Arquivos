@@ -1,11 +1,19 @@
 #include "register.h"
-
 //Register collection é um vetor de registros
 typedef struct register_collection_ {
   Register* vec;
   int length;
 }register_collection;
 typedef register_collection* RegisterCollection;
+
+RegisterCollection create_empty_register_collection(int size) {
+  RegisterCollection new_collection = malloc(sizeof(RegisterCollection));
+
+  new_collection->length = size;
+  new_collection->vec = malloc(new_collection->length * sizeof(Register));
+
+  return new_collection;
+}
 
 //Utilizado apenas para fins de testes
 void debug_register_collection(RegisterCollection regcol) {
@@ -65,4 +73,3 @@ RegisterCollection csv_to_register_vector(string file_path){
   fclose(fp);
   return new_collection;
 }
-

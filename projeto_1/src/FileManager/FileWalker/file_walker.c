@@ -2,6 +2,7 @@
 #include "Header/header.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "../IndexWalker/Index/index.h"
 
 //Responsável pela manipulação interna de um arquivo
 typedef struct file_walker_ {
@@ -132,3 +133,29 @@ void fw_refresh_header(FileWalker fw) {
 void fw_insert(FileWalker fw, Register reg) {
   write_register(fw->fp, reg);
 }
+
+Index* data_to_index_vector(FileWalker fw) {
+  long int initial_position = ftell(fw->fp); 
+  int size = get_reg_number(fw->header);
+
+  Index* vector = (Index*) malloc(size * sizeof(Index));
+
+  for(int i = 0; i < size; i++) {
+    long int position = ftell(fw->fp);
+    Register reg = read_register(fw->fp);
+    
+    if(is_removed(reg)) {
+      i--;
+      continue;
+    }
+
+    else {
+      vector[i] = create_index(get_id(reg), position-initial_position);
+    } 
+  }
+
+  return vector;
+}
+
+
+
