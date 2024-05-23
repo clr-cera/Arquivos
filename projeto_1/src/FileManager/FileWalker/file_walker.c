@@ -24,6 +24,7 @@ FileWalker create_file_walker(string file_path, bool create_header) {
     free(fw);
     return NULL;
   }
+
   
   fw->file_path = file_path;
 
@@ -33,6 +34,13 @@ FileWalker create_file_walker(string file_path, bool create_header) {
   }
   else {
     fw->header = get_header(fw->fp);
+
+    if(is_inconsistent(fw->header)) {
+      fw->current_register = NULL;
+      close_file_walker(&fw, false);
+      return NULL;
+    }
+
     header_set_status_incon(fw->header);
     fw_refresh_header(fw);
   }
@@ -43,12 +51,15 @@ FileWalker create_file_walker(string file_path, bool create_header) {
 }
 
 //Encerra um file walker, liberando memória e fechando o arquivo com fclose
-void close_file_walker(FileWalker* fwp) {
+void close_file_walker(FileWalker* fwp, bool is_con) {
   FileWalker fw = *fwp;
   
   free(fw->file_path);
-  header_set_status_con(fw->header);
-  fw_refresh_header(fw);
+  if (is_con) {
+    header_set_status_con(fw->header);
+    fw_refresh_header(fw);
+  }
+
 
   if (fw->header != NULL) 
     erase_header(&fw->header);
@@ -138,7 +149,6 @@ void fw_insert(FileWalker fw, Register reg) {
 }
 
 Index* data_to_index_vector(FileWalker fw) {
-  long int initial_position = ftell(fw->fp); 
   int size = get_reg_number(fw->header);
 
   Index* vector = (Index*) malloc(size * sizeof(Index));
@@ -149,12 +159,12 @@ Index* data_to_index_vector(FileWalker fw) {
     
     if(is_removed(reg)) {
       i--;
-      continue;
     }
-
     else {
-      vector[i] = create_index(get_id(reg), position-initial_position);
+      vector[i] = create_index(get_id(reg), position);
     } 
+
+    free_register(&reg); 
   }
 
   return vector;

@@ -77,3 +77,6 @@ void erase_header(Header* headerp) {
   *headerp = NULL;
 }
 
+bool is_inconsistent(Header header) {
+  return header->status == '0';
+}

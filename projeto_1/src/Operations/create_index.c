@@ -5,7 +5,7 @@
 // Essa operação analisa um arquivo e a partir dele gera um arquivo de índice
 int create_index_file(string data_file_name, string index_file_name, FileManager fm) {
   fm_create_empty_index(fm, index_file_name);
-  Index* vector = fm_get_index_vector(fm,data_file_name); 
+  Index* vector = fm_get_index_vector(fm, data_file_name); 
   if (vector == NULL) {
     return -1;
   }

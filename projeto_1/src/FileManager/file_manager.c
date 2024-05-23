@@ -104,13 +104,15 @@ void fm_write_register_collection(FileManager fm, string file_name, RegisterColl
 int fm_create_file_walker(FileManager fm, string file_name, bool new_header) {
   string file_path = concat_string(DATA_PATH, file_name);
   fm->curr_fw = create_file_walker(file_path, new_header);
-  if (fm->curr_fw == NULL) return -1;
+  if (fm->curr_fw == NULL) {
+    return -1;
+  }
   else return 1;
 }
 
 //Fecha o file walker associado a um dado File Manager
 void fm_close_file_walker(FileManager fm) {
-  close_file_walker(&fm->curr_fw);
+  close_file_walker(&fm->curr_fw, true);
 }
 
 //Cria um arquivo binário de nome "file_name" no diretório "DATA_PATH"
@@ -179,10 +181,13 @@ int fm_print_all_filter(FileManager fm, string file_name, Filter filter) {
 Index* fm_get_index_vector(FileManager fm,string data_file_name){
   int returnal = fm_create_file_walker(fm, data_file_name, false);
 
-  if (returnal == -1)
+  if (returnal == -1){
     return NULL;
+  }
 
   Index* vector = data_to_index_vector(fm->curr_fw); 
+
+  fm_close_file_walker(fm);
 
   return vector;
 }
