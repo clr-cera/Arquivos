@@ -80,3 +80,11 @@ void erase_header(Header* headerp) {
 bool is_inconsistent(Header header) {
   return header->status == '0';
 }
+
+int header_get_topo(Header h){
+  return h->topo;
+}
+
+void header_set_topo(Header h, int t){
+  h->topo = t;
+}

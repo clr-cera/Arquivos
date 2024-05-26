@@ -48,6 +48,16 @@ int main(void) {
       returnal = create_index_file(data_file_name, index_file_name, file_manager);
     }
 
+    //Operação 5
+    if (c == '5') {
+      char* file_name = read_string();
+      char* index_name = read_string();
+      int search_quantity; scanf(" %d", &search_quantity);
+
+      returnal = delete_from_where(file_name, index_name, search_quantity, file_manager);
+      free(file_name);
+    }
+
     if (returnal == -1)
       printf("Falha no processamento do arquivo.\n");
   }

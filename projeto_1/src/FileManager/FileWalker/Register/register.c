@@ -248,4 +248,17 @@ Register csv_line_to_register(FILE* fp){
   return line;
 }
 
+//Configura um registro como logicamente removido
+bool set_removed(Register reg) {
+  reg->removido = '1';
+  return true;
+}
 
+bool set_prox(Register reg, long int p){
+  reg->prox = p;
+  return true;
+}
+
+long int get_prox(Register reg){
+  return reg->prox;
+}

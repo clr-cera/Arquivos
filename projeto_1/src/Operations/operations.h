@@ -15,3 +15,4 @@ int select_from_where(char* file_name, int search_quantity, FileManager fm);
 
 int create_index_file(string data_file_name, string index_file_name, FileManager fm);
 
+int delete_from_where(char* file_name, string index_file_name, int search_quantity, FileManager fm);

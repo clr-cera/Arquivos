@@ -170,5 +170,92 @@ Index* data_to_index_vector(FileWalker fw) {
   return vector;
 }
 
+Register read_in_place(FileWalker fw){
+  long int return_pos = ftell(fw->fp);
+  Register reg = read_register(fw->fp);
+  fseek(fw->fp, return_pos, SEEK_SET);
+  return reg;
+}
+
+int fw_delete_all_filter(FileWalker fw, Filter filter) {
+  long int initial_pos = ftell(fw->fp);
+  fseek(fw->fp, 0, SEEK_END);
+  long int final_pos = ftell(fw->fp);
+  fseek(fw->fp, initial_pos, SEEK_SET);
+
+  int counter = 0;
+
+  while(ftell(fw->fp) != final_pos){
+    Register reg = read_in_place(fw);
+    if(!is_removed(reg) && check_register(reg, filter)){
+      
+      
+      add_removed_list(fw, reg);
+      
+      counter+=1;
+      // Se apenas um registro for permitido para esse filtro, a busca para
+      if (filter_unique(filter)){
+        free_register(&reg);
+        break;
+      }
+    }
+    free_register(&reg);
+
+  }
+
+  return counter;
+}
+
+void add_removed_list(FileWalker fw, Register reg){
+  //Configura o registro como logicamente removido
+  set_removed(reg);
+
+  long int topo = header_get_topo(fw->header);
+  if(topo == -1){
+    header_set_topo(fw->header, ftell(fw->fp));
+    return;
+  }
+  
+  //Salva a posição do ponteiro do filewalker para retornar no fim da função
+  long int return_pos = ftell(fw->fp);
+
+  //Ponteiro se move para o primeiro elemento da lista encadeada para iniciar o percurso
+  fseek(fw->fp, topo, SEEK_SET);
+  Register current = read_in_place(fw);
+
+  //Caso o primeiro registro da lista de removidos seja maior que o novo registro, o topo deve também ser atualizado
+  if (get_register_tamanho(current) >= get_register_tamanho(reg)){
+    set_prox(reg, topo);
+    header_set_topo(fw->header, ftell(fw->fp));
+    free_register(&current);
+  } else {
+    Register next;
+    while(get_prox(current) != -1){
+      
+      fseek(fw->fp, get_prox(current), SEEK_SET);
+      free_register(&current);
+      current = read_in_place(fw);
 
 
+      if(get_prox(current) == -1){
+        break;
+      } 
+
+      fseek(fw->fp, get_prox(current), SEEK_SET);
+      free_register(&next);
+      next = read_in_place(fw);
+
+      if(get_register_tamanho(next) >= get_register_tamanho(reg))
+        break;
+    }
+    set_prox(reg, get_prox(current));
+    set_prox(current, return_pos);
+    write_register(fw->fp, current);
+    free_register(&current);
+    free_register(&next);
+  }
+
+  //Retorna a posição do ponteiro do filewaker para posição salva anteriormente
+  fseek(fw->fp, return_pos, SEEK_SET);
+  write_register(fw->fp,reg);
+}

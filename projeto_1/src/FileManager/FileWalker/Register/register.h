@@ -35,3 +35,6 @@ string get_nome_jogador(Register reg);
 string get_nacionalidade(Register reg);
 string get_nome_clube(Register reg);
 
+bool set_removed(Register reg);
+bool set_prox(Register reg, long int p);
+long int get_prox(Register reg);

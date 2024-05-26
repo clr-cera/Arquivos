@@ -17,6 +17,7 @@ int fw_print_all(FileWalker fw);
 int fw_print_all_filter(FileWalker fw, Filter filter);
 Index* data_to_index_vector(FileWalker fw);
 
-
+void update_register(Register reg, FileWalker fw);
+int fw_delete_all_filter(FileWalker fw, Filter filter);
 int fw_get_reg_number(FileWalker fw);
-
+void add_removed_list(FileWalker fw, Register reg);

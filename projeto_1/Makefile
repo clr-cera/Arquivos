@@ -8,7 +8,6 @@ main:
 lib:
 	gcc -c src/Lib/*.c 
 
-
 operations:
 	gcc -c src/Operations/*.c
 
@@ -46,7 +45,15 @@ run:
 	./main.output
 
 test:
-	./main.output < ./tests/caso1.in
+	@ if [ -z "$(NUM)" ]; then \
+		echo "Please provide a NUM value, e.g., 'make test NUM=1'"; \
+	else \
+		./main.output < ./arquivos/in/$(NUM).in; \
+	fi
 	
 zip:
 	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.out' '*.txt' '*.bin' '*.csv'
+
+debug: main lib operations file_manager funcoes_fornecidas
+	gcc -I. *.o -o main.output -Wall -g
+	rm -f *.o

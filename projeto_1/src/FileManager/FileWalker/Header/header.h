@@ -20,3 +20,6 @@ void erase_header(Header* headerp);
 
 bool is_inconsistent(Header header);
 
+int header_get_topo(Header h);
+
+void header_set_topo(Header h, int t);
