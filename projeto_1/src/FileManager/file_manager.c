@@ -216,12 +216,14 @@ long int fm_get_offset_by_id(FileManager fm, string index_file_name, int id) {
   return returnal;
 }
 
-int fm_delete_all_filter(FileManager fm, string file_name, Filter filter) {
+int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter filter) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, false);
 
+  fm_create_index_walker(fm, index_name, false);
+
   if (returnal != -1){
-    returnal = fw_delete_all_filter(fm->curr_fw, filter);
+    returnal = fw_delete_all_filter(fm->curr_fw, filter, fm->curr_iw);
     fm_close_file_walker(fm);
   }
 

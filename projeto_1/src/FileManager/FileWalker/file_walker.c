@@ -170,6 +170,7 @@ Index* data_to_index_vector(FileWalker fw) {
   return vector;
 }
 
+//Lê um registro sem tirar o ponteiro do byte offset, útil para atualizar informações de um registro
 Register read_in_place(FileWalker fw){
   long int return_pos = ftell(fw->fp);
   Register reg = read_register(fw->fp);
@@ -177,7 +178,8 @@ Register read_in_place(FileWalker fw){
   return reg;
 }
 
-int fw_delete_all_filter(FileWalker fw, Filter filter) {
+//Deleta todos os registros que correspondem ao filtro
+int fw_delete_all_filter(FileWalker fw, Filter filter, IndexWalker iw) {
   long int initial_pos = ftell(fw->fp);
   fseek(fw->fp, 0, SEEK_END);
   long int final_pos = ftell(fw->fp);
@@ -185,25 +187,25 @@ int fw_delete_all_filter(FileWalker fw, Filter filter) {
 
   int counter = 0;
 
+  if (filter_unique(filter)){
+    long int offset = search_offset(iw, filter_get_id(filter));
+    fseek(fw->fp, offset, SEEK_SET);
+    Register reg = read_in_place(fw);
+    add_removed_list(fw, reg);
+    
+  }
+
   while(ftell(fw->fp) != final_pos){
     long int return_pos = ftell(fw->fp);
     Register reg = read_register(fw->fp);
+
     if(!is_removed(reg) && check_register(reg, filter)){
-      
       fseek(fw->fp, return_pos, SEEK_SET);
       add_removed_list(fw, reg);
-      
       counter+=1;
-      // Se apenas um registro for permitido para esse filtro, a busca para
-      if (filter_unique(filter)){
-        free_register(&reg);
-        break;
-      }
     }
-    free_register(&reg);
-
   }
-
+  fseek(fw->fp, initial_pos, SEEK_SET);
   return counter;
 }
 
@@ -259,4 +261,5 @@ void add_removed_list(FileWalker fw, Register reg){
   //Retorna a posição do ponteiro do filewaker para posição salva anteriormente
   fseek(fw->fp, return_pos, SEEK_SET);
   write_register(fw->fp,reg);
+  free_register(&reg);
 }

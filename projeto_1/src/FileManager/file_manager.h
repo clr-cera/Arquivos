@@ -27,4 +27,4 @@ int fm_get_reg_number(FileManager fm, string data_file_name);
 
 long int fm_get_offset_by_id(FileManager fm, string index_file_name, int id);
 
-int fm_delete_all_filter(FileManager fm, string file_name, Filter filter);
+int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter filter);

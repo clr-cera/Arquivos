@@ -13,4 +13,4 @@ void print_filter(Filter filter);
 Filter read_filter(int m);
 bool check_register(Register reg, Filter filter);
 bool filter_unique(Filter filter);
-
+int filter_get_id(Filter filter);
