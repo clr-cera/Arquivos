@@ -121,6 +121,6 @@ bool filter_unique(Filter filter) {
   return filter->id != -1;
 }
 
-int filter_get_id{
+int filter_get_id(Filter filter){
   return filter->id;
 }

@@ -15,7 +15,7 @@ int delete_from_where(char* file_name, string index_file_name, int search_quanti
     filter = read_filter(m);
 
     // Imprime-se todos os registros que passam no filtro
-    counter = fm_delete_all_filter(fm, file_name, filter);
+    counter = fm_delete_all_filter(fm, file_name, index_file_name, filter);
     // Se for -1, o arquivo não existe
     if (counter == -1) break;
 
