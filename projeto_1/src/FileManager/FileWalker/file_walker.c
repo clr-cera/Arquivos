@@ -189,10 +189,12 @@ int fw_delete_all_filter(FileWalker fw, Filter filter, IndexWalker iw) {
 
   if (filter_unique(filter)){
     long int offset = search_offset(iw, filter_get_id(filter));
-    fseek(fw->fp, offset, SEEK_SET);
-    Register reg = read_in_place(fw);
-    add_removed_list(fw, reg);
-    
+    if(offset != -1){
+      fseek(fw->fp, offset, SEEK_SET);
+      Register reg = read_in_place(fw);
+      add_removed_list(fw, reg);
+    }
+    return offset;
   }
 
   while(ftell(fw->fp) != final_pos){
