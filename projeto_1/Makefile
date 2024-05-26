@@ -1,42 +1,42 @@
 all: main lib operations file_manager funcoes_fornecidas
-	gcc -I. *.o -o main.output -Wall
+	gcc -I. *.o -o main.output -Wall -g
 	rm -f *.o
  
 main:
-	gcc -c src/main.c
+	gcc -c src/main.c -g
 
 lib:
-	gcc -c src/Lib/*.c 
+	gcc -c src/Lib/*.c -g
 
 operations:
-	gcc -c src/Operations/*.c
+	gcc -c src/Operations/*.c -g
 
 funcoes_fornecidas:
-	gcc -c src/Funcoes_fornecidas/*.c
+	gcc -c src/Funcoes_fornecidas/*.c -g
 
 file_manager: file_walker index_walker
-	gcc -c src/FileManager/*.c
+	gcc -c src/FileManager/*.c -g
 
 file_walker: header register filter
-	gcc -c src/FileManager/FileWalker/*.c
+	gcc -c src/FileManager/FileWalker/*.c -g
 
 header:
-	gcc -c src/FileManager/FileWalker/Header/*.c
+	gcc -c src/FileManager/FileWalker/Header/*.c -g
 
 register:
-	gcc -c src/FileManager/FileWalker/Register/*.c
+	gcc -c src/FileManager/FileWalker/Register/*.c -g
 
 filter:
-	gcc -c src/FileManager/FileWalker/Filter/*.c
+	gcc -c src/FileManager/FileWalker/Filter/*.c -g
 
 index_walker: index index_header
-	gcc -c src/FileManager/IndexWalker/*.c
+	gcc -c src/FileManager/IndexWalker/*.c -g
 
 index:
-	gcc -c src/FileManager/IndexWalker/Index/*.c
+	gcc -c src/FileManager/IndexWalker/Index/*.c -g
 
 index_header:
-	gcc -c src/FileManager/IndexWalker/IndexHeader/*.c
+	gcc -c src/FileManager/IndexWalker/IndexHeader/*.c -g
 
 clean:
 	rm -f *.o *.output *.zip
@@ -54,6 +54,5 @@ test:
 zip:
 	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.out' '*.txt' '*.bin' '*.csv'
 
-debug: main lib operations file_manager funcoes_fornecidas
-	gcc -I. *.o -o main.output -Wall -g
-	rm -f *.o
+restore:
+	@cp ./arquivos/Entrada/* ./database/

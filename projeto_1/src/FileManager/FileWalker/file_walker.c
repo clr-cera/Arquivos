@@ -186,10 +186,11 @@ int fw_delete_all_filter(FileWalker fw, Filter filter) {
   int counter = 0;
 
   while(ftell(fw->fp) != final_pos){
-    Register reg = read_in_place(fw);
+    long int return_pos = ftell(fw->fp);
+    Register reg = read_register(fw->fp);
     if(!is_removed(reg) && check_register(reg, filter)){
       
-      
+      fseek(fw->fp, return_pos, SEEK_SET);
       add_removed_list(fw, reg);
       
       counter+=1;
