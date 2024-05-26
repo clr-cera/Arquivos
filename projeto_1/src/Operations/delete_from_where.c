@@ -4,6 +4,10 @@
 
 // Essa operação imprime todos os registros que obedecem um filtro, são realizadas buscas conforme a quantidade informada
 int delete_from_where(char* file_name, string index_file_name, int search_quantity, FileManager fm) {
+
+  //Cria o índice para busca
+  create_index_file(file_name,index_file_name,fm);
+
   int counter = -1;
   for (int i = 1; i <= search_quantity; i++){
     //printf("Busca %d\n\n", i);
