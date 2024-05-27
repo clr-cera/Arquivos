@@ -1,4 +1,5 @@
 #include "register.h"
+#include <stdio.h>
 
 #define CSV_LINE_SIZE_BUFFER 256
 
@@ -7,7 +8,8 @@ typedef struct register_{
   char removido;
   int tamanhoRegistro;
   long int prox;
-  
+  long int read_at; //Guarda onde um registro foi lido, utilizado apenas dentro do programa, não é escrito no arquivo
+
   int id;
   int idade;
   
@@ -121,6 +123,8 @@ void write_register(FILE* fp, Register reg) {
 //Lê um registro de um arquivo binário
 Register read_register(FILE* fp) {
   Register reg = (Register) malloc(sizeof(register_obj));
+
+  reg->read_at = ftell(fp);
 
   fread(&(reg->removido), sizeof(char), 1, fp);
   fread(&(reg->tamanhoRegistro), sizeof(int), 1, fp);
@@ -261,4 +265,8 @@ bool set_prox(Register reg, long int p){
 
 long int get_prox(Register reg){
   return reg->prox;
+}
+
+long int get_read_at(Register reg){
+  return reg->read_at;
 }
