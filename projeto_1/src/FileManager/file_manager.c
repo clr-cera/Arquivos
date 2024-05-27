@@ -241,7 +241,7 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
 
   if(filter_unique(filter)) {
     long int offset = fm_get_offset_by_id(fm, index_name, filter_get_id(filter));
-    printf("%ld\n", offset);
+    // printf("%ld\n", offset); // DEBUG
     if (offset != -1)
       fw_delete_with_offset(fm->curr_fw, filter, offset);
   }
