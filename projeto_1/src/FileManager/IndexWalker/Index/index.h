@@ -12,4 +12,5 @@ int get_index_id(Index index);
 long int get_index_offset(Index index);
 
 Index* sort_index_vector(Index* vector, int size);
+void erase_index_vector(Index** vectorp, int size);
 

@@ -228,6 +228,7 @@ int fm_create_index_table(string data_file_name, string index_file_name, FileMan
   int size = fm_get_reg_number(fm, data_file_name);
   vector = sort_index_vector(vector, size);
   fm_insert_all_index(fm, index_file_name, vector, size);
+  erase_index_vector(&vector, size);
 
   return 1;
 

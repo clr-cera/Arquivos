@@ -66,3 +66,13 @@ Index* sort_index_vector(Index* vector, int size) {
 
   return vector;
 }
+
+void erase_index_vector(Index** vectorp, int size) {
+  Index* vector = *vectorp;
+  for(int i = 0; i < size; i++) {
+    free(vector[i]);
+    vector[i] = NULL;
+  }
+  free(vector);
+  *vectorp = NULL;
+}
