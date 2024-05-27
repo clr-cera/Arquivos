@@ -46,6 +46,8 @@ int main(void) {
       char* index_file_name = read_string();
 
       returnal = create_index_file(data_file_name, index_file_name, file_manager);
+
+      free(data_file_name);
     }
 
     //Operação 5

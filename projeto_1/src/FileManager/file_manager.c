@@ -62,8 +62,10 @@ void fm_create_empty_table(FileManager fm, string file_name) {
 }
 
 //Cria um arquivo de índice vazio
-void fm_create_empty_index(FileManager fm, string file_name) {
-  fm_insert_name_in_registry(fm, file_name);
+void fm_create_empty_index(FileManager fm, string file_name, bool is_update) {
+  if(!is_update)
+    fm_insert_name_in_registry(fm, file_name);
+
   fm_create_file(fm, file_name);
 
   fm_create_index_walker(fm, file_name, true); 
@@ -216,8 +218,8 @@ long int fm_get_offset_by_id(FileManager fm, string index_file_name, int id) {
   return returnal;
 }
 
-int fm_create_index_table(string data_file_name, string index_file_name, FileManager fm) {
-  fm_create_empty_index(fm, index_file_name);
+int fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool is_update) {
+  fm_create_empty_index(fm, index_file_name, is_update);
   Index* vector = fm_get_index_vector(fm, data_file_name); 
   if (vector == NULL) {
     return -1;

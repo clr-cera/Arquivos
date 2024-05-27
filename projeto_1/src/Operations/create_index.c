@@ -4,7 +4,7 @@
 
 // Essa operação analisa um arquivo e a partir dele gera um arquivo de índice
 int create_index_file(string data_file_name, string index_file_name, FileManager fm) {
-  int returnal = fm_create_index_table(data_file_name, index_file_name, fm);
+  int returnal = fm_create_index_table(data_file_name, index_file_name, fm, false);
   if (returnal == -1){
     return returnal;
   }

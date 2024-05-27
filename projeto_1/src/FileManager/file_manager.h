@@ -18,7 +18,7 @@ int fm_print_all_filter(FileManager fm, string file_name, Filter filter);
 
 void fm_delete_file(FileManager fm, string file_name);
 
-void fm_create_empty_index(FileManager fm, string file_name);
+void fm_create_empty_index(FileManager fm, string file_name, bool is_update);
 
 Index* fm_get_index_vector(FileManager fm,string data_file_name);
 int fm_insert_all_index(FileManager fm, string index_file_name, Index* vector, int size);
@@ -29,5 +29,5 @@ long int fm_get_offset_by_id(FileManager fm, string index_file_name, int id);
 
 int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter filter);
 
-int fm_create_index_table(string data_file_name, string index_file_name, FileManager fm);
+int fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool is_update);
 
