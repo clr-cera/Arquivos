@@ -23,11 +23,6 @@ int delete_from_where(char* file_name, string index_file_name, int search_quanti
     // Se for -1, o arquivo não existe
     if (counter == -1) break;
 
-    // Se for 0, nenhum registro correspondente ao filtro foi encontrado
-    if (counter <= 0) {
-      printf("Registro inexistente.\n\n");
-    }
-
     erase_filter(&filter);
   }
 
