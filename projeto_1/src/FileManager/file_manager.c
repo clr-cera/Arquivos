@@ -216,16 +216,40 @@ long int fm_get_offset_by_id(FileManager fm, string index_file_name, int id) {
   return returnal;
 }
 
+int fm_create_index_table(string data_file_name, string index_file_name, FileManager fm) {
+  fm_create_empty_index(fm, index_file_name);
+  Index* vector = fm_get_index_vector(fm, data_file_name); 
+  if (vector == NULL) {
+    return -1;
+  }
+
+  int size = fm_get_reg_number(fm, data_file_name);
+  vector = sort_index_vector(vector, size);
+  fm_insert_all_index(fm, index_file_name, vector, size);
+
+  return 1;
+
+}
+
 int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter filter) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, false);
 
-  fm_create_index_walker(fm, index_name, false);
-
-  if (returnal != -1){
-    returnal = fw_delete_all_filter(fm->curr_fw, filter, fm->curr_iw);
-    fm_close_file_walker(fm);
+  if(returnal == -1) {
+    return returnal;
   }
 
+  if(filter_unique(filter)) {
+    long int offset = fm_get_offset_by_id(fm, index_name, filter_get_id(filter));
+    printf("%ld\n", offset);
+    if (offset != -1)
+      fw_delete_with_offset(fm->curr_fw, filter, offset);
+  }
+
+  else {
+    returnal = fw_delete_all_filter(fm->curr_fw, filter);
+  }
+
+  fm_close_file_walker(fm);
   return returnal;
 }

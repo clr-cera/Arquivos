@@ -3,7 +3,6 @@
 #include "Register/register.h"
 #include "Filter/filter.h"
 #include "../IndexWalker/Index/index.h"
-#include "../IndexWalker/index_walker.h"
 #include <stdbool.h>
 
 typedef struct file_walker_* FileWalker;
@@ -19,6 +18,7 @@ int fw_print_all_filter(FileWalker fw, Filter filter);
 Index* data_to_index_vector(FileWalker fw);
 
 void update_register(Register reg, FileWalker fw);
-int fw_delete_all_filter(FileWalker fw, Filter filter, IndexWalker iw);
+int fw_delete_all_filter(FileWalker fw, Filter filter);
+int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset);
 int fw_get_reg_number(FileWalker fw);
 void add_removed_list(FileWalker fw, Register reg);

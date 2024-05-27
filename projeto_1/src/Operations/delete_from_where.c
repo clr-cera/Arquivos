@@ -6,7 +6,7 @@
 int delete_from_where(char* file_name, string index_file_name, int search_quantity, FileManager fm) {
 
   //Cria o índice para busca
-  create_index_file(file_name,index_file_name,fm);
+  fm_create_index_table(file_name, index_file_name, fm);
 
   int counter = -1;
   for (int i = 1; i <= search_quantity; i++){
@@ -32,7 +32,7 @@ int delete_from_where(char* file_name, string index_file_name, int search_quanti
   }
 
   //Após a remoção, cria o índice novamente, para que ele esteja atualizado sem os valores removidos pelas operações anteriores
-  create_index_file(file_name,index_file_name,fm);
+  fm_create_index_table(file_name, index_file_name, fm);
 
   return counter;
 }

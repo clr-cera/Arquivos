@@ -178,7 +178,7 @@ Register read_in_place(FileWalker fw){
 }
 
 //Deleta todos os registros que correspondem ao filtro
-int fw_delete_all_filter(FileWalker fw, Filter filter, IndexWalker iw) {
+int fw_delete_all_filter(FileWalker fw, Filter filter) {
   long int initial_pos = ftell(fw->fp);
   fseek(fw->fp, 0, SEEK_END);
   long int final_pos = ftell(fw->fp);
@@ -186,29 +186,37 @@ int fw_delete_all_filter(FileWalker fw, Filter filter, IndexWalker iw) {
 
   int counter = 0;
 
-  if (filter_unique(filter)){
-    long int offset = search_offset(iw, filter_get_id(filter));
-    if(offset != -1){
-      fseek(fw->fp, offset, SEEK_SET);
-      Register reg = read_in_place(fw);
-      if(is_removed(reg))
-        return 0;
-      add_removed_list(fw, reg);
-      return 1;
-    }
-    return 0;
-  }
-
-  while(ftell(fw->fp) != final_pos){
+  while(ftell(fw->fp) < final_pos){
     Register reg = read_register(fw->fp);
 
     if(!is_removed(reg) && check_register(reg, filter)){
+      debug_register(reg);
       fseek(fw->fp, get_read_at(reg), SEEK_SET);
       add_removed_list(fw, reg);
       counter+=1;
+      printf("REMOVED!\n");
     }
   }
   fseek(fw->fp, initial_pos, SEEK_SET);
+  return counter;
+}
+
+int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
+  fseek(fw->fp, offset, SEEK_SET); 
+  Register reg = read_register(fw->fp);
+  
+  int counter = 0;
+
+  if(!is_removed(reg)) {
+    debug_register(reg); //DEBUG
+    
+    fseek(fw->fp, get_read_at(reg), SEEK_SET);
+    add_removed_list(fw, reg);
+    counter=1;
+
+    printf("REMOVED\n"); //DEBUG
+  }
+
   return counter;
 }
 
