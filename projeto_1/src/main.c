@@ -54,9 +54,19 @@ int main(void) {
     if (c == '5') {
       char* file_name = read_string();
       char* index_name = read_string();
-      int search_quantity; scanf(" %d", &search_quantity);
+      int rem_quantity; scanf(" %d", &rem_quantity);
 
-      returnal = delete_from_where(file_name, index_name, search_quantity, file_manager);
+      returnal = delete_from_where(file_name, index_name, rem_quantity, file_manager);
+      free(file_name);
+    }
+
+    //Operação 6
+    if (c == '6') {
+      char* file_name = read_string();
+      char* index_name = read_string();
+      int add_quantity; scanf(" %d", &add_quantity);
+
+      returnal = insert_into(file_name, index_name, add_quantity, file_manager);
       free(file_name);
     }
 

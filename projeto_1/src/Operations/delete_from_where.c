@@ -1,15 +1,15 @@
 #include "operations.h"
 
-// Operação de número 3
+// Operação de número 5
 
-// Essa operação imprime todos os registros que obedecem um filtro, são realizadas buscas conforme a quantidade informada
-int delete_from_where(char* file_name, string index_file_name, int search_quantity, FileManager fm) {
+// Essa operação remove todos os registros que obedecem um filtro, são realizadas buscas conforme a quantidade informada
+int delete_from_where(string file_name, string index_file_name, int rem_quantity, FileManager fm) {
 
   //Cria o índice para busca
   fm_create_index_table(file_name, index_file_name, fm, false);
 
   int counter = -1;
-  for (int i = 1; i <= search_quantity; i++){
+  for (int i = 1; i <= rem_quantity; i++){
     //printf("Busca %d\n\n", i);
     int m;
     Filter filter;
@@ -18,7 +18,7 @@ int delete_from_where(char* file_name, string index_file_name, int search_quanti
     scanf("%d", &m);
     filter = read_filter(m);
 
-    // Imprime-se todos os registros que passam no filtro
+    // Deleta todos os registros que passam no filtro
     counter = fm_delete_all_filter(fm, file_name, index_file_name, filter);
     // Se for -1, o arquivo não existe
     if (counter == -1) break;
