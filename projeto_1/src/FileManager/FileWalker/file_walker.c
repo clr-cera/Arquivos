@@ -152,6 +152,9 @@ Index* data_to_index_vector(FileWalker fw) {
   int size = get_reg_number(fw->header);
 
   Index* vector = (Index*) malloc(size * sizeof(Index));
+  for(int i = 0; i < size; i++) {
+    vector[i] = NULL;
+  } 
 
   for(int i = 0; i < size; i++) {
     long int position = ftell(fw->fp);

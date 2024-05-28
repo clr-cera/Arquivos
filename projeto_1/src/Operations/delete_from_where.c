@@ -27,6 +27,7 @@ int delete_from_where(char* file_name, string index_file_name, int search_quanti
   }
 
   //Após a remoção, cria o índice novamente, para que ele esteja atualizado sem os valores removidos pelas operações anteriores
+  fm_delete_file(fm, index_file_name);
   fm_create_index_table(file_name, index_file_name, fm, true);
 
   string binario_path = concat_string(DATA_PATH, file_name); 

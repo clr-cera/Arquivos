@@ -61,7 +61,8 @@ void close_index_walker(IndexWalker* iwp) {
 
 void iw_insert_all_index(IndexWalker iw, Index* vector, int size) {
   for(int i = 0; i < size; i++) {
-    write_index(iw->index_fp, vector[i]);
+    if (vector[i] != NULL)
+      write_index(iw->index_fp, vector[i]);
   }
 }
 
