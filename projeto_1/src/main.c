@@ -70,11 +70,17 @@ int main(void) {
       free(file_name);
     }
 
+    //Funcionalidade debug
+    if (c == 'd'){
+      Register reg = read_reg_from_keyboard();
+      debug_register(reg);
+    }
+
     if (returnal == -1)
       printf("Falha no processamento do arquivo.\n");
   }
 
   erase_file_manager(&file_manager);
-
+  
   return 0;
 }

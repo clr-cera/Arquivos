@@ -1,5 +1,9 @@
 #include "register.h"
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include "../../../Funcoes_fornecidas/funcoes_fornecidas.h"
+#include "../../../Lib/lib.h"
 
 #define CSV_LINE_SIZE_BUFFER 256
 
@@ -269,4 +273,50 @@ long int get_prox(Register reg){
 
 long int get_read_at(Register reg){
   return reg->read_at;
+}
+
+Register read_reg_from_keyboard(){
+  Register new = (Register) malloc(sizeof(register_obj));
+
+  new->removido = '0';
+  new->read_at = -1;
+  new->prox = -1;
+
+  scanf("%d", &(new->id));
+  scanf("%d", &(new->idade));
+
+  char Buffer[100];
+
+  scan_quote_string(Buffer);
+  if(strcmp(Buffer, "NULO") == 0){
+    new->tamNomeJog = 0;
+    new->nomeJogador = NULL;
+  } else {
+    new->tamNomeJog = strlen(Buffer);
+    new->nomeJogador = malloc(sizeof(char) * new->tamNomeJog);
+    strncpy(new->nomeJogador, Buffer, new->tamNomeJog);
+  }
+
+  scan_quote_string(Buffer);
+  if(strcmp(Buffer, "NULO") == 0){
+    new->tamNacionalidade = 0;
+    new->nacionalidade = NULL;
+  } else {
+    new->tamNacionalidade = strlen(Buffer);
+    new->nacionalidade = malloc(sizeof(char) * new->tamNacionalidade);
+    strncpy(new->nacionalidade, Buffer, new->tamNacionalidade);
+  }
+
+  scan_quote_string(Buffer);
+  if(strcmp(Buffer, "NULO") == 0){
+    new->tamNomeClube = 0;
+    new->nomeClube = NULL;
+  } else {
+    new->tamNomeClube = strlen(Buffer);
+    new->nomeClube = malloc(sizeof(char) * new->tamNomeClube);
+    strncpy(new->nomeClube, Buffer, new->tamNomeClube);
+  }
+
+  new->tamanhoRegistro = new->tamNomeClube + new->tamNacionalidade + new->tamNomeJog + 6 * sizeof(int) + sizeof(char) + sizeof(long int);
+  return new;
 }
