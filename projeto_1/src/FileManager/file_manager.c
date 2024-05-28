@@ -210,3 +210,17 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
   fm_close_file_walker(fm);
   return returnal;
 }
+
+int fm_insert_into(FileManager fm, string file_name, Register reg){
+  int returnal;
+  returnal = fm_create_file_walker(fm, file_name, READWRITE);
+
+  if(returnal == -1) {
+    return returnal;
+  }
+
+  fw_insert_into(fm->curr_fw, reg);
+
+  fm_close_file_walker(fm);
+  return returnal;
+}

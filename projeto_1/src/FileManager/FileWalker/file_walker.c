@@ -180,7 +180,7 @@ Register read_in_place(FileWalker fw){
   return reg;
 }
 
-//Deleta todos os registros que correspondem ao filtro
+//Deleta todos os registros que correspondem ao filtro, realiza uma busca
 int fw_delete_all_filter(FileWalker fw, Filter filter) {
   long int initial_pos = ftell(fw->fp);
   fseek(fw->fp, 0, SEEK_END);
@@ -204,6 +204,7 @@ int fw_delete_all_filter(FileWalker fw, Filter filter) {
   return counter;
 }
 
+//Remove um registro localizado exatamente no offset recebido pela função, não realiza busca
 int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
   fseek(fw->fp, offset, SEEK_SET); 
   Register reg = read_register(fw->fp);
@@ -290,4 +291,19 @@ void add_removed_list(FileWalker fw, Register reg){
   fseek(fw->fp, get_read_at(reg), SEEK_SET);
   write_register(fw->fp,reg);
   free_register(&reg);
+}
+
+//Insere um registro no arquivo binário, conforme as especificações da funcionalidade 6
+int fw_insert_into(FileWalker fw, Register reg){
+
+  //Se o topo é -1, então não há espaços livres no arquivo para inserir o registro. Logo, deve ser inserado no final
+  if(header_get_topo(fw->header) == -1){
+    fseek(fw->fp, 0, SEEK_END);
+    write_register(fw->fp, reg);
+    return 0;
+  }
+
+  //WIP
+
+  return 0;
 }

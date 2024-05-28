@@ -6,6 +6,7 @@
 #include "../../../Lib/lib.h"
 
 #define CSV_LINE_SIZE_BUFFER 256
+#define READ_FROM_KEYBOARD_BUFFER 100
 
 // Todos os tam não devem contar o \0 da string
 typedef struct register_{
@@ -279,13 +280,12 @@ Register read_reg_from_keyboard(){
   Register new = (Register) malloc(sizeof(register_obj));
 
   new->removido = '0';
-  new->read_at = -1;
   new->prox = -1;
 
   scanf("%d", &(new->id));
   scanf("%d", &(new->idade));
 
-  char Buffer[100];
+  char Buffer[READ_FROM_KEYBOARD_BUFFER];
 
   scan_quote_string(Buffer);
   if(strcmp(Buffer, "NULO") == 0){
