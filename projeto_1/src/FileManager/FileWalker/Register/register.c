@@ -143,6 +143,10 @@ Register read_register(FILE* fp) {
   
   read_dinamic_field(&reg->nomeClube, &reg->tamNomeClube, fp);
 
+  //Serve para pular os sifrões após o fim do registro, caso existam.
+  if(ftell(fp) != (reg->read_at + reg->tamanhoRegistro))
+    fseek(fp, reg->read_at + reg->tamanhoRegistro, SEEK_SET);
+
   return reg;
 }
 
@@ -319,4 +323,29 @@ Register read_reg_from_keyboard(){
 
   new->tamanhoRegistro = new->tamNomeClube + new->tamNacionalidade + new->tamNomeJog + 6 * sizeof(int) + sizeof(char) + sizeof(long int);
   return new;
+}
+
+void overwrite_register(FILE* fp, Register reg, Register old){
+
+  if(reg->tamanhoRegistro > old->tamanhoRegistro){
+    printf("Tentando sobreescrever um registro menor que o novo");
+    return;
+  }
+
+  //Posiciona o ponteiro na posição correta para sobrescrever o registro antigo
+  if(ftell(fp) != old->read_at)
+    fseek(fp, old->read_at, SEEK_SET);
+  
+  //Se eles tem exatamente o mesmo tamanho, não há necessidade de inserir sifões
+  if(reg->tamanhoRegistro == old->tamanhoRegistro){
+    write_register(fp, reg);
+    return;
+  }
+
+  //Escreve o novo registro com o tamanho do anterior e insere $ para sobrescrever o lixo que sobrar
+  int lixo = old->tamanhoRegistro - reg->tamanhoRegistro;
+  reg->tamanhoRegistro = old->tamanhoRegistro;
+  write_register(fp, reg);
+  for(int i = 0; i < lixo; i++)
+    fputc('$', fp);
 }

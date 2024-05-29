@@ -35,11 +35,12 @@ string get_nome_jogador(Register reg);
 string get_nacionalidade(Register reg);
 string get_nome_clube(Register reg);
 
-//Utilizado majoritariamente na funcionalidade 5
+//Utilizados majoritariamente na funcionalidade 5
 bool set_removed(Register reg);
 bool set_prox(Register reg, long int p);
 long int get_prox(Register reg);
 long int get_read_at(Register reg);
 
-//Utilizada majoritariamente na funcionalidade 6
+//Utilizados majoritariamente na funcionalidade 6
 Register read_reg_from_keyboard();
+void overwrite_register(FILE* fp, Register reg, Register old);

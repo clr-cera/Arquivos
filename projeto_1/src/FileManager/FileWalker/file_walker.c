@@ -296,14 +296,64 @@ void add_removed_list(FileWalker fw, Register reg){
 //Insere um registro no arquivo binário, conforme as especificações da funcionalidade 6
 int fw_insert_into(FileWalker fw, Register reg){
 
+  long int topo = header_get_topo(fw->header);
+
   //Se o topo é -1, então não há espaços livres no arquivo para inserir o registro. Logo, deve ser inserado no final
-  if(header_get_topo(fw->header) == -1){
+  if(topo == -1){
     fseek(fw->fp, 0, SEEK_END);
     write_register(fw->fp, reg);
+    free_register(&reg);
     return 0;
   }
 
-  //WIP
+  fseek(fw->fp, topo, SEEK_SET);
+  Register current = read_in_place(fw);
 
+  //O caso do primeiro da lista de removidos ser o best-fit recebe um tratamento isolado, pois é o único caso onde o topo deve ser modificado
+  if (get_register_tamanho(current) >= get_register_tamanho(reg)){
+    header_set_topo(fw->header, get_prox(current));
+    overwrite_register(fw->fp, reg, current);
+    free_register(&reg);
+    free_register(&current);
+    return 0;
+  }
+
+  //Percorre a lista procurando por espaço
+  Register prev = current;
+  current = NULL;
+  while(get_prox(prev) != -1){
+    fseek(fw->fp, get_prox(prev), SEEK_SET);
+    current = read_in_place(fw);
+
+    if(get_register_tamanho(current) >= get_register_tamanho(reg)){
+      break;
+    }
+
+    free_register(&prev);
+    prev = current;
+    current = NULL;
+  }
+
+  //Há espaço na lista
+  if(current != NULL && get_register_tamanho(current) >= get_register_tamanho(reg)){
+    set_prox(prev, get_prox(current));
+    fseek(fw->fp, get_read_at(prev), SEEK_SET);
+    write_register(fw->fp, prev);
+    overwrite_register(fw->fp, reg, current);
+    free_register(&prev);
+    free_register(&current);
+    free_register(&reg);
+    return 0;
+  }
+
+  //Não há espaço na lista, logo insere no fim
+  fseek(fw->fp, 0, SEEK_END);
+  write_register(fw->fp, reg);
+
+  free_register(&reg);
+  if(current != NULL) {
+    free_register(&current);
+  }
+  free_register(&prev);
   return 0;
 }
