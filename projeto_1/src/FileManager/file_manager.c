@@ -36,6 +36,7 @@ void erase_file_manager(FileManager* fmp) {
 int fm_create_index_walker(FileManager fm, string file_name, OpenType open_type) {
   string file_path = concat_string(DATA_PATH, file_name);
   
+  //TODO change create_index_walker to adapt this
   if(open_type == WRITE) {
     fm->curr_iw = create_index_walker(file_path, true);
   }
@@ -77,6 +78,7 @@ void fm_write_register_collection(FileManager fm, string file_name, RegisterColl
 int fm_create_file_walker(FileManager fm, string file_name, OpenType open_type) {
   string file_path = concat_string(DATA_PATH, file_name);
 
+  //TODO change create_file_walker to adapt this
   if(open_type == WRITE) {
     fm->curr_fw = create_file_walker(file_path, true);
   }
