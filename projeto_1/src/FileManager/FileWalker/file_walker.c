@@ -17,9 +17,9 @@ typedef file_walker_obj* FileWalker;
 void fw_refresh_header(FileWalker fw);
 
 //Inicializa um File Walker e o associa ao arquivo file_path
-FileWalker create_file_walker(string file_path, bool create_header) {
+FileWalker create_file_walker(string file_path, string mode) {
   FileWalker fw = (FileWalker) malloc(sizeof(file_walker_obj));
-  fw->fp = fopen(file_path, "rb+");
+  fw->fp = fopen(file_path, mode);
   if (fw->fp == NULL) {
     free(fw);
     return NULL;
@@ -28,7 +28,7 @@ FileWalker create_file_walker(string file_path, bool create_header) {
   
   fw->file_path = file_path;
 
-  if (create_header) {
+  if (strcmp(mode, "wb") == 0) {
     fw->header = new_header();
     write_header(fw->fp, fw->header);
   }

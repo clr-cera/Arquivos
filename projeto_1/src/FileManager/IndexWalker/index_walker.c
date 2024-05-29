@@ -1,5 +1,6 @@
 #include "index_walker.h"
 #include <stdio.h>
+#include <string.h>
 
 typedef struct index_walker_ {
   FILE* index_fp;
@@ -12,9 +13,9 @@ typedef index_walkerObj* IndexWalker;
 void iw_refresh_header(IndexWalker iw);
 
 //Inicializa um Index Walker e o associa ao arquivo index_path
-IndexWalker create_index_walker(string file_path, bool create_header) {
+IndexWalker create_index_walker(string file_path, string mode) {
   IndexWalker iw = (IndexWalker) malloc(sizeof(index_walkerObj));
-  iw->index_fp = fopen(file_path, "rb+");
+  iw->index_fp = fopen(file_path, mode);
   if (iw->index_fp == NULL) {
     free(iw);
     return NULL;
@@ -22,7 +23,7 @@ IndexWalker create_index_walker(string file_path, bool create_header) {
   
   iw->index_file_path = file_path;
 
-  if (create_header) {
+  if (strcmp(mode, "wb") == 0) {
     iw->index_header = new_index_header();
     write_index_header(iw->index_fp, iw->index_header);
   }

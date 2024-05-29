@@ -52,7 +52,7 @@ test:
 	fi
 	
 zip:
-	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.out' '*.txt' '*.bin' '*.csv'
+	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.out' '*.txt' '*.csv'
 
 restore:
-	@cp ./arquivos/Entrada/* ./database/
+	@cp ./arquivos/Entrada/* ./

@@ -36,15 +36,14 @@ void erase_file_manager(FileManager* fmp) {
 int fm_create_index_walker(FileManager fm, string file_name, OpenType open_type) {
   string file_path = concat_string(DATA_PATH, file_name);
   
-  //TODO change create_index_walker to adapt this
   if(open_type == WRITE) {
-    fm->curr_iw = create_index_walker(file_path, true);
+    fm->curr_iw = create_index_walker(file_path, "wb");
   }
   if(open_type == READ) {
-    fm->curr_iw = create_index_walker(file_path, false);
+    fm->curr_iw = create_index_walker(file_path, "rb");
   }
   if(open_type == READWRITE) {
-    fm->curr_iw = create_index_walker(file_path, false);
+    fm->curr_iw = create_index_walker(file_path, "rb+");
   }
 
   if (fm->curr_iw == NULL) return -1;
@@ -78,15 +77,14 @@ void fm_write_register_collection(FileManager fm, string file_name, RegisterColl
 int fm_create_file_walker(FileManager fm, string file_name, OpenType open_type) {
   string file_path = concat_string(DATA_PATH, file_name);
 
-  //TODO change create_file_walker to adapt this
   if(open_type == WRITE) {
-    fm->curr_fw = create_file_walker(file_path, true);
+    fm->curr_fw = create_file_walker(file_path, "wb");
   }
   if(open_type == READ) {
-    fm->curr_fw = create_file_walker(file_path, false);
+    fm->curr_fw = create_file_walker(file_path, "rb");
   }
   if(open_type == READWRITE) {
-    fm->curr_fw = create_file_walker(file_path, false);
+    fm->curr_fw = create_file_walker(file_path, "rb+");
   }
 
   if (fm->curr_fw == NULL) {
