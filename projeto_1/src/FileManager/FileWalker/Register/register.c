@@ -1,7 +1,12 @@
 #include "register.h"
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include "../../../Funcoes_fornecidas/funcoes_fornecidas.h"
+#include "../../../Lib/lib.h"
 
 #define CSV_LINE_SIZE_BUFFER 256
+#define READ_FROM_KEYBOARD_BUFFER 100
 
 // Todos os tam não devem contar o \0 da string
 typedef struct register_{
@@ -138,6 +143,10 @@ Register read_register(FILE* fp) {
   
   read_dinamic_field(&reg->nomeClube, &reg->tamNomeClube, fp);
 
+  //Serve para pular os sifrões após o fim do registro, caso existam.
+  if(ftell(fp) != (reg->read_at + reg->tamanhoRegistro))
+    fseek(fp, reg->read_at + reg->tamanhoRegistro, SEEK_SET);
+
   return reg;
 }
 
@@ -269,4 +278,74 @@ long int get_prox(Register reg){
 
 long int get_read_at(Register reg){
   return reg->read_at;
+}
+
+Register read_reg_from_keyboard(){
+  Register new = (Register) malloc(sizeof(register_obj));
+
+  new->removido = '0';
+  new->prox = -1;
+
+  scanf("%d", &(new->id));
+  scanf("%d", &(new->idade));
+
+  char Buffer[READ_FROM_KEYBOARD_BUFFER];
+
+  scan_quote_string(Buffer);
+  if(strcmp(Buffer, "NULO") == 0){
+    new->tamNomeJog = 0;
+    new->nomeJogador = NULL;
+  } else {
+    new->tamNomeJog = strlen(Buffer);
+    new->nomeJogador = malloc(sizeof(char) * new->tamNomeJog);
+    strncpy(new->nomeJogador, Buffer, new->tamNomeJog);
+  }
+
+  scan_quote_string(Buffer);
+  if(strcmp(Buffer, "NULO") == 0){
+    new->tamNacionalidade = 0;
+    new->nacionalidade = NULL;
+  } else {
+    new->tamNacionalidade = strlen(Buffer);
+    new->nacionalidade = malloc(sizeof(char) * new->tamNacionalidade);
+    strncpy(new->nacionalidade, Buffer, new->tamNacionalidade);
+  }
+
+  scan_quote_string(Buffer);
+  if(strcmp(Buffer, "NULO") == 0){
+    new->tamNomeClube = 0;
+    new->nomeClube = NULL;
+  } else {
+    new->tamNomeClube = strlen(Buffer);
+    new->nomeClube = malloc(sizeof(char) * new->tamNomeClube);
+    strncpy(new->nomeClube, Buffer, new->tamNomeClube);
+  }
+
+  new->tamanhoRegistro = new->tamNomeClube + new->tamNacionalidade + new->tamNomeJog + 6 * sizeof(int) + sizeof(char) + sizeof(long int);
+  return new;
+}
+
+void overwrite_register(FILE* fp, Register reg, Register old){
+
+  if(reg->tamanhoRegistro > old->tamanhoRegistro){
+    printf("Tentando sobreescrever um registro menor que o novo");
+    return;
+  }
+
+  //Posiciona o ponteiro na posição correta para sobrescrever o registro antigo
+  if(ftell(fp) != old->read_at)
+    fseek(fp, old->read_at, SEEK_SET);
+  
+  //Se eles tem exatamente o mesmo tamanho, não há necessidade de inserir sifões
+  if(reg->tamanhoRegistro == old->tamanhoRegistro){
+    write_register(fp, reg);
+    return;
+  }
+
+  //Escreve o novo registro com o tamanho do anterior e insere $ para sobrescrever o lixo que sobrar
+  int lixo = old->tamanhoRegistro - reg->tamanhoRegistro;
+  reg->tamanhoRegistro = old->tamanhoRegistro;
+  write_register(fp, reg);
+  for(int i = 0; i < lixo; i++)
+    fputc('$', fp);
 }
