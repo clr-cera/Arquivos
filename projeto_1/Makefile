@@ -52,7 +52,7 @@ test:
 	fi
 	
 zip:
-	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.in' '*.out' '*.txt' '*.csv'
+	zip -R arquivo_intro.zip . '*.c' '*.h' 'Makefile' '*.txt'
 
 restore:
 	@cp ./arquivos/Entrada/* ./
