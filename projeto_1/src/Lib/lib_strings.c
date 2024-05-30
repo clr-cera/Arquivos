@@ -87,3 +87,24 @@ int count_lines(FILE* fp){
   fseek(fp, initial_position, SEEK_SET);
   return counter;
 }
+
+int read_age(){
+  char c;
+  while((c = getchar()) != EOF && isspace(c));
+
+  if(c == 'N' || c == 'n') { // idade NULO
+		getchar(); getchar(); getchar(); // ignorar o "ULO" de NULO.
+		return -1; // -1 para idade nula
+  }
+
+  int n = 0;
+
+  while(c >= 48 && c <= 57){
+    n += c - 48;
+    n *= 10;
+    c = getchar();
+  }
+
+  return n / 10;
+
+}

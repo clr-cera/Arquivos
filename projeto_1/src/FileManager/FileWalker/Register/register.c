@@ -287,7 +287,7 @@ Register read_reg_from_keyboard(){
   new->prox = -1;
 
   scanf("%d", &(new->id));
-  scanf("%d", &(new->idade)); //IMPORTANTE: Preciso adicionar tratamento para caso a idade seja nula
+  new->idade = read_age();
 
   char Buffer[READ_FROM_KEYBOARD_BUFFER];
 
