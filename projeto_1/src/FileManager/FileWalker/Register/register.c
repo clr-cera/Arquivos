@@ -328,20 +328,17 @@ Register read_reg_from_keyboard(){
 void overwrite_register(FILE* fp, Register reg, Register old){
 
   if(reg->tamanhoRegistro > old->tamanhoRegistro){
-    printf("Tentando sobreescrever um registro menor que o novo");
     return;
   }
 
   //Posiciona o ponteiro na posição correta para sobrescrever o registro antigo
   if(ftell(fp) != old->read_at){
     fseek(fp, old->read_at, SEEK_SET);
-    printf("Teve que arrumar a posição do ponteiro\n"); //Debug
   }
     
   
   //Se eles tem exatamente o mesmo tamanho, não há necessidade de inserir sifões
   if(reg->tamanhoRegistro == old->tamanhoRegistro){
-    printf("Não houve necessidade de inserir sifrões\n"); //Debug
     write_register(fp, reg);
     return;
   }
@@ -352,6 +349,5 @@ void overwrite_register(FILE* fp, Register reg, Register old){
   write_register(fp, reg);
   for(int i = 0; i < lixo; i++)
     fputc('$', fp);
-  printf("Inseri %d sifrões\n", lixo); //Debug
   return;
 }

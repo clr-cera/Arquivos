@@ -302,8 +302,12 @@ int fw_insert_into(FileWalker fw, Register reg){
   if(topo == -1){
     fseek(fw->fp, 0, SEEK_END);
     write_register(fw->fp, reg);
+
+    //Atualiza o Header para acomodar um novo registro no fim do arquivo
+    header_increse_offset_number(fw->header, get_register_tamanho(reg));
+    header_increse_register_number(fw->header, 1);
+
     free_register(&reg);
-    printf("Inseri no final mesmo\n"); //Debug
     return 0;
   }
 
@@ -312,7 +316,6 @@ int fw_insert_into(FileWalker fw, Register reg){
 
   //O caso do primeiro da lista de removidos ser o best-fit recebe um tratamento isolado, pois é o único caso onde o topo deve ser modificado
   if (get_register_tamanho(current) >= get_register_tamanho(reg)){
-    printf("Inseri na primeira posição\n"); //Debug
     header_set_topo(fw->header, get_prox(current));
     overwrite_register(fw->fp, reg, current);
     free_register(&reg);
@@ -323,7 +326,6 @@ int fw_insert_into(FileWalker fw, Register reg){
   //Percorre a lista procurando por espaço
   Register prev = current;
   current = NULL;
-  printf("Tive que percorrer a lista\n"); //Debug
   while(get_prox(prev) != -1){
     fseek(fw->fp, get_prox(prev), SEEK_SET);
     current = read_in_place(fw);
@@ -338,7 +340,6 @@ int fw_insert_into(FileWalker fw, Register reg){
   }
 
   //Há espaço na lista
-  printf("Inseri no meio da lista\n"); //Debug
   if(current != NULL && get_register_tamanho(current) >= get_register_tamanho(reg)){
     set_prox(prev, get_prox(current));
     fseek(fw->fp, get_read_at(prev), SEEK_SET);
@@ -351,9 +352,12 @@ int fw_insert_into(FileWalker fw, Register reg){
   }
 
   //Não há espaço na lista, logo insere no fim
-  printf("Teve que ser no fim mesmo\n"); //Debug
   fseek(fw->fp, 0, SEEK_END);
   write_register(fw->fp, reg);
+
+  //Atualiza o Header para acomodar um novo registro no fim do arquivo
+  header_increse_offset_number(fw->header, get_register_tamanho(reg));
+  header_increse_register_number(fw->header, 1);
 
   free_register(&reg);
   if(current != NULL) {
