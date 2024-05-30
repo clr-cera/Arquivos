@@ -287,7 +287,7 @@ Register read_reg_from_keyboard(){
   new->prox = -1;
 
   scanf("%d", &(new->id));
-  scanf("%d", &(new->idade));
+  scanf("%d", &(new->idade)); //IMPORTANTE: Preciso adicionar tratamento para caso a idade seja nula
 
   char Buffer[READ_FROM_KEYBOARD_BUFFER];
 
@@ -333,11 +333,15 @@ void overwrite_register(FILE* fp, Register reg, Register old){
   }
 
   //Posiciona o ponteiro na posição correta para sobrescrever o registro antigo
-  if(ftell(fp) != old->read_at)
+  if(ftell(fp) != old->read_at){
     fseek(fp, old->read_at, SEEK_SET);
+    printf("Teve que arrumar a posição do ponteiro\n"); //Debug
+  }
+    
   
   //Se eles tem exatamente o mesmo tamanho, não há necessidade de inserir sifões
   if(reg->tamanhoRegistro == old->tamanhoRegistro){
+    printf("Não houve necessidade de inserir sifrões\n"); //Debug
     write_register(fp, reg);
     return;
   }
@@ -348,4 +352,6 @@ void overwrite_register(FILE* fp, Register reg, Register old){
   write_register(fp, reg);
   for(int i = 0; i < lixo; i++)
     fputc('$', fp);
+  printf("Inseri %d sifrões\n", lixo); //Debug
+  return;
 }
