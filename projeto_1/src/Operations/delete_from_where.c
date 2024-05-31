@@ -9,21 +9,25 @@ int delete_from_where(string file_name, string index_file_name, int rem_quantity
   fm_create_index_table(file_name, index_file_name, fm, false);
 
   int counter = -1;
-  for (int i = 1; i <= rem_quantity; i++){
+  Filter filterv[rem_quantity];
+
+  for (int i = 0; i < rem_quantity; i++){
     //printf("Busca %d\n\n", i);
     int m;
-    Filter filter;
-
     // Cria-se o filtro
     scanf("%d", &m);
-    filter = read_filter(m);
+    filterv[i] = read_filter(m);
 
-    // Deleta todos os registros que passam no filtro
-    counter = fm_delete_all_filter(fm, file_name, index_file_name, filter);
-    // Se for -1, o arquivo não existe
-    if (counter == -1) break;
+  }
 
-    erase_filter(&filter);
+  // Deleta todos os registros que passam no filtro
+  counter = fm_delete_all_filter(fm, file_name, index_file_name, filterv, rem_quantity);
+  // Se for -1, o arquivo não existe
+  if (counter == -1) return counter;
+
+  // Apaga todos os filtros da memória
+  for (int i = 0; i < rem_quantity; i++){
+    erase_filter(&(filterv[i]));
   }
 
   //Após a remoção, cria o índice novamente, para que ele esteja atualizado sem os valores removidos pelas operações anteriores

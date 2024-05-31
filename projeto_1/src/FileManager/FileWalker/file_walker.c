@@ -131,6 +131,7 @@ int fw_print_all_filter(FileWalker fw, Filter filter) {
     free_register(&reg);
   }
 
+  fseek(fw->fp, initial_pos, SEEK_SET);
   return counter;
 }
 
@@ -149,6 +150,7 @@ void fw_insert(FileWalker fw, Register reg) {
 }
 
 Index* data_to_index_vector(FileWalker fw) {
+  long int initial_pos = ftell(fw->fp);
   int size = get_reg_number(fw->header);
 
   Index* vector = (Index*) malloc(size * sizeof(Index));
@@ -170,6 +172,7 @@ Index* data_to_index_vector(FileWalker fw) {
     free_register(&reg); 
   }
 
+  fseek(fw->fp, initial_pos, SEEK_SET);
   return vector;
 }
 
@@ -200,12 +203,15 @@ int fw_delete_all_filter(FileWalker fw, Filter filter) {
       //printf("REMOVED!\n"); //DEBUG
     }
   }
+
   fseek(fw->fp, initial_pos, SEEK_SET);
   return counter;
 }
 
 //Remove um registro localizado exatamente no offset recebido pela função, não realiza busca
 int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
+  long int initial_pos = ftell(fw->fp);
+
   fseek(fw->fp, offset, SEEK_SET); 
   Register reg = read_register(fw->fp);
   
@@ -221,6 +227,7 @@ int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
     //printf("REMOVED\n"); //DEBUG
   }
 
+  fseek(fw->fp, initial_pos, SEEK_SET);
   return counter;
 }
 
@@ -235,6 +242,7 @@ void add_removed_list(FileWalker fw, Register reg){
     header_set_topo(fw->header, get_read_at(reg));
     write_register(fw->fp,reg);
     return;
+    fw_refresh_header(fw);
   }
 
   //Ponteiro se move para o primeiro elemento da lista encadeada para iniciar o percurso
@@ -293,10 +301,12 @@ void add_removed_list(FileWalker fw, Register reg){
   fseek(fw->fp, get_read_at(reg), SEEK_SET);
   write_register(fw->fp,reg);
   free_register(&reg);
+  fw_refresh_header(fw);
 }
 
 //Insere um registro no arquivo binário, conforme as especificações da funcionalidade 6
 int fw_insert_into(FileWalker fw, Register reg){
+  long int initial_pos = ftell(fw->fp);
 
   long int topo = header_get_topo(fw->header);
   header_increse_register_number(fw->header, 1);
@@ -310,8 +320,11 @@ int fw_insert_into(FileWalker fw, Register reg){
     header_increse_offset_number(fw->header, get_register_tamanho(reg));
 
     free_register(&reg);
+    fseek(fw->fp, initial_pos, SEEK_SET);
+    fw_refresh_header(fw);
     return 0;
   }
+
   // Se o a lista de removidos não for vazia, significa que algum espaço vazio vai ser ocupado, então já se retira do número de registros removidos
   header_decrease_removed_number(fw->header, 1);
 
@@ -324,6 +337,9 @@ int fw_insert_into(FileWalker fw, Register reg){
     overwrite_register(fw->fp, reg, current);
     free_register(&reg);
     free_register(&current);
+
+    fseek(fw->fp, initial_pos, SEEK_SET);
+    fw_refresh_header(fw);
     return 0;
   }
 
@@ -352,6 +368,9 @@ int fw_insert_into(FileWalker fw, Register reg){
     free_register(&prev);
     free_register(&current);
     free_register(&reg);
+
+    fseek(fw->fp, initial_pos, SEEK_SET);
+    fw_refresh_header(fw);
     return 0;
   }
 
@@ -368,5 +387,8 @@ int fw_insert_into(FileWalker fw, Register reg){
     free_register(&current);
   }
   free_register(&prev);
+
+  fseek(fw->fp, initial_pos, SEEK_SET);
+  fw_refresh_header(fw);
   return 0;
 }

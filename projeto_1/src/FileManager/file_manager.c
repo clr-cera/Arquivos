@@ -188,7 +188,7 @@ int fm_create_index_table(string data_file_name, string index_file_name, FileMan
 
 }
 
-int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter filter) {
+int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter* filterv, int times) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, READWRITE);
 
@@ -196,30 +196,36 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
     return returnal;
   }
 
-  if(filter_unique(filter)) {
-    long int offset = fm_get_offset_by_id(fm, index_name, filter_get_id(filter));
-    // printf("%ld\n", offset); // DEBUG
-    if (offset != -1)
-      fw_delete_with_offset(fm->curr_fw, filter, offset);
-  }
+  for (int i = 0; i < times; i++) {
+    Filter filter = filterv[i];
+    if(filter_unique(filter)) {
+      long int offset = fm_get_offset_by_id(fm, index_name, filter_get_id(filter));
+      // printf("%ld\n", offset); // DEBUG
+      if (offset != -1)
+        fw_delete_with_offset(fm->curr_fw, filter, offset);
+    }
 
-  else {
-    returnal = fw_delete_all_filter(fm->curr_fw, filter);
+    else {
+      returnal = fw_delete_all_filter(fm->curr_fw, filter);
+    }
   }
 
   fm_close_file_walker(fm);
   return returnal;
 }
 
-int fm_insert_into(FileManager fm, string file_name, Register reg){
+int fm_insert_into(FileManager fm, string file_name, Register* regv, int times){
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, READWRITE);
-
   if(returnal == -1) {
     return returnal;
   }
 
-  fw_insert_into(fm->curr_fw, reg);
+
+  for(int i = 0; i < times; i++) {
+    Register reg = regv[i];
+    fw_insert_into(fm->curr_fw, reg);
+  }
 
   fm_close_file_walker(fm);
   return returnal;

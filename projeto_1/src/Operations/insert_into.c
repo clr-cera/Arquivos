@@ -7,12 +7,16 @@ int insert_into(string file_name, string index_file_name, int add_quantity, File
 
   int returnal = 0;
 
-  for (int i = 1; i <= add_quantity; i++){
-    Register new = read_reg_from_keyboard();
-    returnal = fm_insert_into(fm, file_name, new);
-    if(returnal == -1){
-      return returnal;
-    }
+  Register regvec[add_quantity];
+
+  for (int i = 0; i < add_quantity; i++){
+    regvec[i] = read_reg_from_keyboard();
+  }
+
+  returnal = fm_insert_into(fm, file_name, regvec, add_quantity);
+
+  if(returnal == -1){
+    return returnal;
   }
 
   //Após as inserções, cria o índice atualizado
