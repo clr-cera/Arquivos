@@ -200,6 +200,9 @@ int fw_delete_all_filter(FileWalker fw, Filter filter) {
       //printf("REMOVED!\n"); //DEBUG
     }
   }
+
+  debug_removed_list(fw);
+
   fseek(fw->fp, initial_pos, SEEK_SET);
   return counter;
 }
@@ -245,7 +248,7 @@ void add_removed_list(FileWalker fw, Register reg){
 
 
   //Caso o primeiro registro da lista de removidos seja maior que o novo registro, o topo deve também ser atualizado
-  if (get_register_tamanho(current) >= get_register_tamanho(reg)){
+  if (get_register_tamanho(current) > get_register_tamanho(reg)){ //Aqui um >= seria mais eficiente, pois realizaria menos leituras no disco, mas só fica identico aos casos 5 e 6 com um >
    // printf("Is already writing\n"); //DEBUG
     set_prox(reg, topo);
     header_set_topo(fw->header, get_read_at(reg));
@@ -273,7 +276,7 @@ void add_removed_list(FileWalker fw, Register reg){
       }
       next = read_in_place(fw);
 
-      if(get_register_tamanho(next) >= get_register_tamanho(reg))
+      if(get_register_tamanho(next) > get_register_tamanho(reg))//Aqui um >= seria mais eficiente, pois realizaria menos leituras no disco, mas só fica identico aos casos 5 e 6 com um >
         break;
     }
     set_prox(reg, get_prox(current));
@@ -369,4 +372,27 @@ int fw_insert_into(FileWalker fw, Register reg){
   }
   free_register(&prev);
   return 0;
+}
+
+void debug_removed_list(FileWalker fw){
+
+  if(header_get_topo(fw->header) == -1){
+    printf("Nem tem lista ainda\n");
+    return;
+  }
+
+  fseek(fw->fp, header_get_topo(fw->header), SEEK_SET);
+  Register current = read_register(fw->fp);
+  debug_register(current);
+
+  while (get_prox(current) != -1){
+    fseek(fw->fp, get_prox(current), SEEK_SET);
+    free_register(&current);
+    current = read_register(fw->fp);
+    debug_register(current);
+  }
+
+  printf("Fim da lista\n");
+
+
 }
