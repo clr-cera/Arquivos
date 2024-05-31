@@ -123,15 +123,25 @@ int fm_print_all(FileManager fm, string file_name) {
 }
 
 //Imprime todos os registros no arquivo informado que respeitem as condições de um dado filtro
-int fm_print_all_filter(FileManager fm, string file_name, Filter filter) {
+int fm_print_all_filter(FileManager fm, string file_name, Filter* filterv, int times) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, READ);
 
-  if (returnal != -1){
+  if (returnal == -1){
+    return returnal;
+  }
+  for(int i = 0; i < times; i++) {
+    printf("Busca %d\n\n", i+1);
+
+    Filter filter = filterv[i];
     returnal = fw_print_all_filter(fm->curr_fw, filter);
-    fm_close_file_walker(fm);
+  
+    if (returnal == 0) {
+      printf("Registro inexistente.\n\n");
+    }
   }
 
+  fm_close_file_walker(fm);
   return returnal;
 }
 

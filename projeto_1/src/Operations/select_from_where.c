@@ -5,26 +5,21 @@
 // Essa operação imprime todos os registros que obedecem um filtro, são realizadas buscas conforme a quantidade informada
 int select_from_where(char* file_name, int search_quantity, FileManager fm) {
   int counter = -1;
-  for (int i = 1; i <= search_quantity; i++){
-    printf("Busca %d\n\n", i);
+  Filter filterv[search_quantity];
+
+  for (int i = 0; i < search_quantity; i++){
     int m;
-    Filter filter;
 
     // Cria-se o filtro
     scanf("%d", &m);
-    filter = read_filter(m);
+    filterv[i] = read_filter(m);
+  }
+  
+  // Imprime-se todos os registros que passam nos filtros
+  counter = fm_print_all_filter(fm, file_name, filterv, search_quantity);
 
-    // Imprime-se todos os registros que passam no filtro
-    counter = fm_print_all_filter(fm, file_name, filter);
-    // Se for -1, o arquivo não existe
-    if (counter == -1) break;
-
-    // Se for 0, nenhum registro correspondente ao filtro foi encontrado
-    if (counter == 0) {
-      printf("Registro inexistente.\n\n");
-    }
-
-    erase_filter(&filter);
+  for (int i = 0; i < search_quantity; i++) {
+    erase_filter(&(filterv[i]));
   }
 
   return counter;

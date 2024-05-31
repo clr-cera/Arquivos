@@ -201,7 +201,7 @@ int fw_delete_all_filter(FileWalker fw, Filter filter) {
       add_removed_list(fw, reg);
       counter+=1;
       //printf("REMOVED!\n"); //DEBUG
-      debug_removed_list(fw);
+      //debug_removed_list(fw);
     }
   }
 

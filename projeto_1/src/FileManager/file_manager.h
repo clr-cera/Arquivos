@@ -22,7 +22,7 @@ void erase_file_manager(FileManager* fmp);
 int fm_create_with_csv(FileManager fm, string file_name, string csv_path);
 
 int fm_print_all(FileManager fm, string file_name);
-int fm_print_all_filter(FileManager fm, string file_name, Filter filter);
+int fm_print_all_filter(FileManager fm, string file_name, Filter* filterv, int times);
 
 
 Index* fm_get_index_vector(FileManager fm,string data_file_name);
