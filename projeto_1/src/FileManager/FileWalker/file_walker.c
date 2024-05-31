@@ -299,6 +299,7 @@ void add_removed_list(FileWalker fw, Register reg){
 int fw_insert_into(FileWalker fw, Register reg){
 
   long int topo = header_get_topo(fw->header);
+  header_increse_register_number(fw->header, 1);
 
   //Se o topo é -1, então não há espaços livres no arquivo para inserir o registro. Logo, deve ser inserado no final
   if(topo == -1){
@@ -307,11 +308,12 @@ int fw_insert_into(FileWalker fw, Register reg){
 
     //Atualiza o Header para acomodar um novo registro no fim do arquivo
     header_increse_offset_number(fw->header, get_register_tamanho(reg));
-    header_increse_register_number(fw->header, 1);
 
     free_register(&reg);
     return 0;
   }
+  // Se o a lista de removidos não for vazia, significa que algum espaço vazio vai ser ocupado, então já se retira do número de registros removidos
+  header_decrease_removed_number(fw->header, 1);
 
   fseek(fw->fp, topo, SEEK_SET);
   Register current = read_in_place(fw);
