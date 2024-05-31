@@ -22,5 +22,6 @@ int fw_delete_all_filter(FileWalker fw, Filter filter);
 int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset);
 int fw_get_reg_number(FileWalker fw);
 void add_removed_list(FileWalker fw, Register reg);
+void debug_removed_list(FileWalker fw);
 
 int fw_insert_into(FileWalker fw, Register reg);
