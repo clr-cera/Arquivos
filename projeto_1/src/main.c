@@ -21,6 +21,7 @@ int main(void) {
 
       returnal = create_table(input_path, output_name, file_manager);
       free(input_path);
+      free(output_name);
     }
 
     //Operação 2
@@ -48,6 +49,7 @@ int main(void) {
       returnal = create_index_file(data_file_name, index_file_name, file_manager);
 
       free(data_file_name);
+      free(index_file_name);
     }
 
     //Operação 5
@@ -58,6 +60,7 @@ int main(void) {
 
       returnal = delete_from_where(file_name, index_name, rem_quantity, file_manager);
       free(file_name);
+      free(index_name);
     }
 
     //Operação 6
@@ -68,12 +71,7 @@ int main(void) {
 
       returnal = insert_into(file_name, index_name, add_quantity, file_manager);
       free(file_name);
-    }
-
-    //Funcionalidade debug
-    if (c == 'd'){
-      Register reg = read_reg_from_keyboard();
-      debug_register(reg);
+      free(index_name);
     }
 
     if (returnal == -1)

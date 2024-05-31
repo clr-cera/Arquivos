@@ -190,36 +190,51 @@ int fm_insert_all_index(FileManager fm, string index_file_name, Index* vector, i
   return 1;
 }
 
-long int fm_get_offset_by_id(FileManager fm, string index_file_name, int id) {
-  long int returnal = fm_create_index_walker(fm, index_file_name, READ);
+long int fm_get_offset_by_id(Index* vector, int size, int id) {
+  int start = 0;
+  int end = size;
 
-  if(returnal == -1)
-    return returnal;
+  while(end > start) {
+    int pivot = (end+start)/2;
 
-  returnal = search_offset(fm->curr_iw, id);
-  fm_close_index_walker(fm);
+    if(get_index_id(vector[pivot]) == id) {
+      return get_index_offset(vector[pivot]);
+    }
 
-  return returnal;
+    else if(get_index_id(vector[pivot]) > id) {
+      end = pivot;
+    }
+    else {
+      start = pivot+1;
+    }
+  }
+  return -1;
 }
 
-int fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool is_update) {
+Index* fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool should_erase) {
   Index* vector = fm_get_index_vector(fm, data_file_name); 
   if (vector == NULL) {
-    return -1;
+    return vector;
   }
 
   int size = fm_get_reg_number(fm, data_file_name);
   vector = sort_index_vector(vector, size);
   fm_insert_all_index(fm, index_file_name, vector, size);
-  erase_index_vector(&vector, size);
 
-  return 1;
+  if (should_erase) {
+    erase_index_vector(&vector, size);
+    return (Index*) 1;
+  }
 
+  return vector;
 }
 
 int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter* filterv, int times) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, READWRITE);
+
+  Index* vector = NULL;
+  int size = 0;
 
   if(returnal == -1) {
     return returnal;
@@ -228,7 +243,8 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
   for (int i = 0; i < times; i++) {
     if (filter_unique(filterv[i])) {
       //Cria o índice para busca
-      fm_create_index_table(file_name, index_name, fm, false);
+      vector = fm_create_index_table(file_name, index_name, fm, false);
+      size = fm_get_reg_number(fm, file_name);
       break;
     }
   }
@@ -236,7 +252,7 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
   for (int i = 0; i < times; i++) {
     Filter filter = filterv[i];
     if(filter_unique(filter)) {
-      long int offset = fm_get_offset_by_id(fm, index_name, filter_get_id(filter));
+      long int offset = fm_get_offset_by_id(vector, size, filter_get_id(filter));
       // printf("%ld\n", offset); // DEBUG
       if (offset != -1)
         fw_delete_with_offset(fm->curr_fw, filter, offset);
@@ -246,6 +262,9 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
       returnal = fw_delete_all_filter(fm->curr_fw, filter);
     }
   }
+
+  if(vector != NULL)
+    erase_index_vector(&vector, size);
 
   //Após a remoção, cria o índice novamente, para que ele esteja atualizado sem os valores removidos pelas operações anteriores
   fm_create_index_table(file_name, index_name, fm, true);

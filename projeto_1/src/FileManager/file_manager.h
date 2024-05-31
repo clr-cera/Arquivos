@@ -30,11 +30,11 @@ int fm_insert_all_index(FileManager fm, string index_file_name, Index* vector, i
 
 int fm_get_reg_number(FileManager fm, string data_file_name);
 
-long int fm_get_offset_by_id(FileManager fm, string index_file_name, int id);
+long int fm_get_offset_by_id(Index* vector, int size, int id);
 
 int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter* filterv, int times);
 
-int fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool is_update);
+Index* fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool should_erase);
 
 int fm_insert_into(FileManager fm, string file_name, string index_name, Register* regv, int times);
 #endif
