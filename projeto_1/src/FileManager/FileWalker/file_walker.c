@@ -227,6 +227,8 @@ int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
 void add_removed_list(FileWalker fw, Register reg){
   //Configura o registro como logicamente removido
   set_removed(reg);
+  header_decrease_register_number(fw->header, 1);
+  header_increase_removed_number(fw->header, 1);
 
   long int topo = header_get_topo(fw->header);
   if(topo == -1){

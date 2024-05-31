@@ -51,6 +51,18 @@ void header_increse_register_number(Header header, int number) {
   header->nroRegArq+=number;
 }
 
+void header_decrease_register_number(Header header, int number) {
+  header->nroRegArq-=number;
+}
+
+void header_increase_removed_number(Header header, int number) {
+  header->nroRegRem+=number;
+}
+
+void header_decrease_removed_number(Header header, int number) {
+  header->nroRegRem-=number;
+}
+
 //Aumenta o offset informado pelo header
 void header_increse_offset_number(Header header, long int number) {
   header->proxByteOffset += number;
