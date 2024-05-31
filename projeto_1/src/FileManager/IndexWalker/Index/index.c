@@ -7,6 +7,7 @@ typedef struct index_ {
 } indexObj;
 
 typedef indexObj* Index;
+void quicksort_rec(Index* startp, Index* endp);
 
 Index create_index(int id, long int byteoffset) {
   Index index = (Index) malloc(sizeof(indexObj));
@@ -52,19 +53,52 @@ long int get_index_offset(Index index) {
   return index->byteoffset;
 }
 
-// TODO make this worth of being in front of my eyes (I will do it don't worry Renan, is now a matter of honor)
+// This function sorts a vector of indexes using quicksort
 Index* sort_index_vector(Index* vector, int size) {
-  for(int i = 0; i < size; i++) {
-    for(int j = 0; j < size-1; j++) {
-      if (vector[j]->id > vector[j+1]->id) {
-        Index temp = vector[j];
-        vector[j] = vector[j+1];
-        vector[j+1] = temp;
-      }
-    }
-  }
+  quicksort_rec(vector, vector + size-1);
 
   return vector;
+}
+
+// This functions swaps indexes from two positions of memory
+void swap(Index* a, Index* b) {
+  Index temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+// This implements the logic for quicksort
+void quicksort_rec(Index* startp, Index* endp) {
+  if(startp >= endp) return;
+  Index* i = startp;
+  Index* j = endp;
+  Index* pivot = startp + (endp-startp)/2; 
+
+  while(1) {
+    if (i == j) {
+      quicksort_rec(startp, pivot-1);
+      quicksort_rec(pivot+1, endp);
+      return;
+    }
+
+    while (i != pivot) {
+      if((*i)->id > (*pivot)->id) {
+        swap(pivot, i);
+        pivot = i;
+        continue;
+      }
+      i++;
+    }
+    
+    while (j != pivot) {
+      if((*j)->id < (*pivot)->id) {
+        swap(pivot, j);
+        pivot = j;
+        continue;
+      }
+      j--;
+    }
+  }
 }
 
 void erase_index_vector(Index** vectorp, int size) {
