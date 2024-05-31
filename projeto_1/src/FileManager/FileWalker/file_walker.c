@@ -203,6 +203,9 @@ int fw_delete_all_filter(FileWalker fw, Filter filter) {
       //printf("REMOVED!\n"); //DEBUG
       //debug_removed_list(fw);
     }
+    else {
+      free_register(&reg);
+    }
   }
 
 
@@ -243,8 +246,9 @@ void add_removed_list(FileWalker fw, Register reg){
   if(topo == -1){
     header_set_topo(fw->header, get_read_at(reg));
     write_register(fw->fp,reg);
-    return;
+    free_register(&reg);
     fw_refresh_header(fw);
+    return;
   }
 
   //Ponteiro se move para o primeiro elemento da lista encadeada para iniciar o percurso
