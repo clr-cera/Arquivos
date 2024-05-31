@@ -99,12 +99,19 @@ void fm_close_file_walker(FileManager fm) {
 }
 
 int fm_get_reg_number(FileManager fm, string data_file_name) {
-  int returnal = fm_create_file_walker(fm, data_file_name, READ);
-
-  if(returnal != -1) {
-    returnal = fw_get_reg_number(fm->curr_fw);
-    fm_close_file_walker(fm);
+  bool should_close = false;
+  if(fm->curr_fw == NULL){
+    int returnal = fm_create_file_walker(fm, data_file_name, READ);
+    if(returnal == -1) {
+      return returnal;
+    }
+    should_close = true;
   }
+
+  int returnal = fw_get_reg_number(fm->curr_fw);
+
+  if(should_close)
+    fm_close_file_walker(fm);
 
   return returnal;
 }
@@ -146,27 +153,39 @@ int fm_print_all_filter(FileManager fm, string file_name, Filter* filterv, int t
 }
 
 Index* fm_get_index_vector(FileManager fm,string data_file_name){
-  int returnal = fm_create_file_walker(fm, data_file_name, READ);
+  bool has_to_close = false;
+  if(fm->curr_fw == NULL) {
+    int returnal = fm_create_file_walker(fm, data_file_name, READ);
 
-  if (returnal == -1){
-    return NULL;
+    if (returnal == -1){
+      return NULL;
+    }
+    has_to_close = true;
   }
 
   Index* vector = data_to_index_vector(fm->curr_fw); 
 
-  fm_close_file_walker(fm);
+  if (has_to_close)
+    fm_close_file_walker(fm);
 
   return vector;
 }
 
 int fm_insert_all_index(FileManager fm, string index_file_name, Index* vector, int size) {
-  int returnal = fm_create_index_walker(fm, index_file_name, WRITE);
-
-  if(returnal == -1)
-    return returnal;
+  bool has_to_close = false;
+  
+  if(fm->curr_iw == NULL){ 
+    int returnal = fm_create_index_walker(fm, index_file_name, WRITE);
+    if (returnal == -1){
+      return returnal;
+    }
+    has_to_close = true;
+  }
 
   iw_insert_all_index(fm->curr_iw, vector, size);
-  fm_close_index_walker(fm);
+
+  if(has_to_close)
+    fm_close_index_walker(fm);
 
   return 1;
 }
@@ -205,6 +224,14 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
   if(returnal == -1) {
     return returnal;
   }
+  
+  for (int i = 0; i < times; i++) {
+    if (filter_unique(filterv[i])) {
+      //Cria o índice para busca
+      fm_create_index_table(file_name, index_name, fm, false);
+      break;
+    }
+  }
 
   for (int i = 0; i < times; i++) {
     Filter filter = filterv[i];
@@ -220,11 +247,14 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
     }
   }
 
+  //Após a remoção, cria o índice novamente, para que ele esteja atualizado sem os valores removidos pelas operações anteriores
+  fm_create_index_table(file_name, index_name, fm, true);
+
   fm_close_file_walker(fm);
   return returnal;
 }
 
-int fm_insert_into(FileManager fm, string file_name, Register* regv, int times){
+int fm_insert_into(FileManager fm, string file_name, string index_name, Register* regv, int times){
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, READWRITE);
   if(returnal == -1) {
@@ -236,6 +266,9 @@ int fm_insert_into(FileManager fm, string file_name, Register* regv, int times){
     Register reg = regv[i];
     fw_insert_into(fm->curr_fw, reg);
   }
+
+  //Após as inserções, cria o índice atualizado
+  fm_create_index_table(file_name, index_name, fm, true);
 
   fm_close_file_walker(fm);
   return returnal;

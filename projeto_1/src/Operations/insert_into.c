@@ -13,14 +13,12 @@ int insert_into(string file_name, string index_file_name, int add_quantity, File
     regvec[i] = read_reg_from_keyboard();
   }
 
-  returnal = fm_insert_into(fm, file_name, regvec, add_quantity);
+  returnal = fm_insert_into(fm, file_name, index_file_name, regvec, add_quantity);
 
   if(returnal == -1){
     return returnal;
   }
 
-  //Após as inserções, cria o índice atualizado
-  fm_create_index_table(file_name, index_file_name, fm, true);
 
   string binario_path = concat_string(DATA_PATH, file_name); 
   binarioNaTela(binario_path);

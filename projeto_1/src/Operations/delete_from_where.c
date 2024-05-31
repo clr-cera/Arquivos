@@ -5,9 +5,6 @@
 // Essa operação remove todos os registros que obedecem um filtro, são realizadas buscas conforme a quantidade informada
 int delete_from_where(string file_name, string index_file_name, int rem_quantity, FileManager fm) {
 
-  //Cria o índice para busca
-  fm_create_index_table(file_name, index_file_name, fm, false);
-
   int counter = -1;
   Filter filterv[rem_quantity];
 
@@ -17,7 +14,6 @@ int delete_from_where(string file_name, string index_file_name, int rem_quantity
     // Cria-se o filtro
     scanf("%d", &m);
     filterv[i] = read_filter(m);
-
   }
 
   // Deleta todos os registros que passam no filtro
@@ -30,8 +26,6 @@ int delete_from_where(string file_name, string index_file_name, int rem_quantity
     erase_filter(&(filterv[i]));
   }
 
-  //Após a remoção, cria o índice novamente, para que ele esteja atualizado sem os valores removidos pelas operações anteriores
-  fm_create_index_table(file_name, index_file_name, fm, true);
 
   string binario_path = concat_string(DATA_PATH, file_name); 
   binarioNaTela(binario_path);

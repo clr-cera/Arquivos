@@ -36,5 +36,5 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
 
 int fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool is_update);
 
-int fm_insert_into(FileManager fm, string file_name, Register* regv, int times);
+int fm_insert_into(FileManager fm, string file_name, string index_name, Register* regv, int times);
 #endif
