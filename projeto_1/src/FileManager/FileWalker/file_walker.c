@@ -223,13 +223,9 @@ int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
   int counter = 0;
 
   if(!is_removed(reg)) {
-    //debug_register(reg); //DEBUG
-    
     fseek(fw->fp, get_read_at(reg), SEEK_SET);
     add_removed_list(fw, reg);
     counter=1;
-
-    //printf("REMOVED\n"); //DEBUG
   }
 
   fseek(fw->fp, initial_pos, SEEK_SET);
@@ -239,75 +235,81 @@ int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
 void add_removed_list(FileWalker fw, Register reg){
   //Configura o registro como logicamente removido
   set_removed(reg);
+
+  //Atualiza as propriedades do header
   header_decrease_register_number(fw->header, 1);
   header_increase_removed_number(fw->header, 1);
 
   long int topo = header_get_topo(fw->header);
+  
+  //Lista vazia, logo o removido deve ser inserido no topo
   if(topo == -1){
+    //Configura a ligação da lista
     header_set_topo(fw->header, get_read_at(reg));
-    write_register(fw->fp,reg);
-    free_register(&reg);
+
+    //Escreve as mudanças no disco
+    overwrite_register(fw->fp, reg, reg);
     fw_refresh_header(fw);
+
+    //Libera RAM
+    free_register(&reg);
     return;
   }
 
   //Ponteiro se move para o primeiro elemento da lista encadeada para iniciar o percurso
   fseek(fw->fp, topo, SEEK_SET);
   Register current = read_in_place(fw);
-  //printf("Top is:\n"); // DEBUG
-  //debug_register(current); // DEBUG
-
 
   //Caso o primeiro registro da lista de removidos seja maior que o novo registro, o topo deve também ser atualizado
-  if (get_register_tamanho(current) > get_register_tamanho(reg)){ //Aqui um >= seria mais eficiente, pois realizaria menos leituras no disco, mas só fica identico aos casos 5 e 6 com um >
-   // printf("Is already writing\n"); //DEBUG
+  if (get_register_tamanho(current) > get_register_tamanho(reg)){//Aqui um >= seria mais eficiente, pois realizaria menos leituras no disco, mas só fica identico aos casos 5 e 6 com um >
+    //Configura a ligação da lista
     set_prox(reg, topo);
     header_set_topo(fw->header, get_read_at(reg));
+    
+    //Escreve as modificações no disco
+    overwrite_register(fw->fp, reg, reg);
+    fw_refresh_header(fw);
+
+    //Libera RAM
     free_register(&current);
-   // printf("Has already wrote\n"); //DEBUG
+    free_register(&reg);
+    return;
   }
 
-  else {
-    Register next = NULL;
-    while(get_prox(current) != -1){
-      
-      fseek(fw->fp, get_prox(current), SEEK_SET);
-      free_register(&current);
-      current = read_in_place(fw);
+  //Inicia o percurso da lista de removidos
+  Register prev = current;
+  current = NULL;
+  while(get_prox(prev) != -1){
 
+    //Lê o próximo item da lista
+    fseek(fw->fp, get_prox(prev), SEEK_SET);
+    current = read_in_place(fw);
 
-      if(get_prox(current) == -1){
-        break;
-      } 
+    //Se encontrar o local para inserir o novo, para
+    if(get_register_tamanho(current) > get_register_tamanho(reg))//Aqui um >= seria mais eficiente, pois realizaria menos leituras no disco, mas só fica identico aos casos 5 e 6 com um >
+      break;
 
-      fseek(fw->fp, get_prox(current), SEEK_SET);
-
-      if (next != NULL) {
-        free_register(&next);
-      }
-      next = read_in_place(fw);
-
-      if(get_register_tamanho(next) > get_register_tamanho(reg))//Aqui um >= seria mais eficiente, pois realizaria menos leituras no disco, mas só fica identico aos casos 5 e 6 com um >
-        break;
-    }
-    set_prox(reg, get_prox(current));
-    set_prox(current, get_read_at(reg));
-
-    fseek(fw->fp, get_read_at(current), SEEK_SET);
-    write_register(fw->fp, current);
-
-
-    free_register(&current);
-    if (next != NULL) {
-      free_register(&next);
-    }
+    //Avança para o próximo da lista
+    free_register(&prev);
+    prev = current;
+    current = NULL;
   }
 
-  //Retorna a posição do ponteiro do filewaker para posição salva anteriormente
-  fseek(fw->fp, get_read_at(reg), SEEK_SET);
-  write_register(fw->fp,reg);
-  free_register(&reg);
+  //Configura a ligação da lista
+  set_prox(reg, get_prox(prev));
+  set_prox(prev, get_read_at(reg));
+
+  //Escreve as mudanças na memória
+  overwrite_register(fw->fp, prev, prev);
+  overwrite_register(fw->fp, reg, reg);
   fw_refresh_header(fw);
+
+  //Libera RAM
+  free_register(&prev);
+  if (current != NULL) {
+    free_register(&current);
+  }
+  free_register(&reg);
 }
 
 //Insere um registro no arquivo binário, conforme as especificações da funcionalidade 6

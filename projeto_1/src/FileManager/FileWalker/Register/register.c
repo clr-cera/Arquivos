@@ -325,13 +325,14 @@ Register read_reg_from_keyboard(){
   return new;
 }
 
+//Utilizada para atualizar um registro ou sobreescrever um registro antigo
 void overwrite_register(FILE* fp, Register reg, Register old){
 
   if(reg->tamanhoRegistro > old->tamanhoRegistro){
     return;
   }
 
-  //Posiciona o ponteiro na posição correta para sobrescrever o registro antigo
+  //Apenas se necessário, posiciona o ponteiro na posição correta para sobrescrever o registro antigo
   if(ftell(fp) != old->read_at){
     fseek(fp, old->read_at, SEEK_SET);
   }
