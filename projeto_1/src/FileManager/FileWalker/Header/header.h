@@ -26,4 +26,4 @@ bool is_inconsistent(Header header);
 
 int header_get_topo(Header h);
 
-void header_set_topo(Header h, int t);
+void header_set_topo(Header h, long int t);

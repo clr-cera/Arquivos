@@ -401,6 +401,8 @@ int fw_insert_into(FileWalker fw, Register reg){
   return 0;
 }
 
+// Essa função imprime todos os registros da lista de remoção, utilizando a função de debug
+// Só usada para debug do código
 void debug_removed_list(FileWalker fw){
 
   if(header_get_topo(fw->header) == -1){

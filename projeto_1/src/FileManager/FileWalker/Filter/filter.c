@@ -121,6 +121,8 @@ bool filter_unique(Filter filter) {
   return filter->id != -1;
 }
 
+// Retorna o id do filtro
+// É usado para buscar o offset em caso de filtro único
 int filter_get_id(Filter filter){
   return filter->id;
 }

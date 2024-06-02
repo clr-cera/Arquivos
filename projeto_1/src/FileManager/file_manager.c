@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// Esse arquivo é responsável pela implementação do File Manager,
+// estrutura a qual é responsável pela manipulação de arquivos e lógica geral em que pedidos
+// de alterações internas ocorrem ao File Walker e Index Walker
 
 int fm_create_file_walker(FileManager fm, string file_name, OpenType open_type);
 void fm_close_file_walker(FileManager fm);
@@ -27,12 +30,17 @@ FileManager create_file_manager(void) {
   return fm;
 }
 
-//Apaga o file manager liberando memória
+// Apaga o file manager da memória primária
+// Assumimos que qualquer File Walker e Index Walker já tenho sido apagado da memória
+// neste ponto, uma vez que após uma operação não é permitido que qualquer um dos dois
+// ainda exista na memória
 void erase_file_manager(FileManager* fmp) {
   free(*fmp);
   *fmp = NULL;
 }
 
+// Cria um Index Walker e o associa ao File Manager
+// Utiliza a enum OpenType para selecionar o modo de abertura do arquivo
 int fm_create_index_walker(FileManager fm, string file_name, OpenType open_type) {
   string file_path = concat_string(DATA_PATH, file_name);
   
@@ -73,7 +81,8 @@ void fm_write_register_collection(FileManager fm, string file_name, RegisterColl
   fm_close_file_walker(fm);
 }
 
-//cria um File Walker e o associa ao File Manager
+// Cria um File Walker e o associa ao File Manager
+// Utiliza a enum OpenType para selecionar o modo de abertura do arquivo
 int fm_create_file_walker(FileManager fm, string file_name, OpenType open_type) {
   string file_path = concat_string(DATA_PATH, file_name);
 
@@ -98,8 +107,11 @@ void fm_close_file_walker(FileManager fm) {
   close_file_walker(&fm->curr_fw, true);
 }
 
+// Essa função retorna o número de registros do arquivo informado
 int fm_get_reg_number(FileManager fm, string data_file_name) {
   bool should_close = false;
+
+  // Caso o File Walker já exista assumimos que o ponteiro fp está na posição do primeiro registro
   if(fm->curr_fw == NULL){
     int returnal = fm_create_file_walker(fm, data_file_name, READ);
     if(returnal == -1) {
@@ -152,8 +164,11 @@ int fm_print_all_filter(FileManager fm, string file_name, Filter* filterv, int t
   return returnal;
 }
 
+// Essa função gera um vetor de índices a partir do arquivo de dados informado
+// É utilizada para gerar o vetor que será ordenado antes da geração do arquivo de índices
 Index* fm_get_index_vector(FileManager fm,string data_file_name){
   bool has_to_close = false;
+  // Caso o File Walker já exista assumimos que o ponteiro fp está na posição do primeiro registro
   if(fm->curr_fw == NULL) {
     int returnal = fm_create_file_walker(fm, data_file_name, READ);
 
@@ -171,9 +186,11 @@ Index* fm_get_index_vector(FileManager fm,string data_file_name){
   return vector;
 }
 
+// Essa função insere o vetor de índices informado no arquivo informado
 int fm_insert_all_index(FileManager fm, string index_file_name, Index* vector, int size) {
   bool has_to_close = false;
   
+  // Caso o arquivo já exista assumimos que o ponteiro fp está na posição do primeiro índice
   if(fm->curr_iw == NULL){ 
     int returnal = fm_create_index_walker(fm, index_file_name, WRITE);
     if (returnal == -1){
@@ -190,6 +207,9 @@ int fm_insert_all_index(FileManager fm, string index_file_name, Index* vector, i
   return 1;
 }
 
+// Essa função busca em um vetor de índices o offset relacionado ao id informado,
+// utiliza da busca binária para isso
+// Retorna -1 caso não ache
 long int fm_get_offset_by_id(Index* vector, int size, int id) {
   int start = 0;
   int end = size;
@@ -211,6 +231,9 @@ long int fm_get_offset_by_id(Index* vector, int size, int id) {
   return -1;
 }
 
+// Essa função gera um arquivo de índices a partir do arquivo de dados informado
+// Ela retorna NULL se não houver o arquivo de dados, retorna um endereço lixo caso
+// should_erase seja true, e retorna o vetor de índices gerado em qualquer outro caso
 Index* fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool should_erase) {
   Index* vector = fm_get_index_vector(fm, data_file_name); 
   if (vector == NULL) {
@@ -229,6 +252,8 @@ Index* fm_create_index_table(string data_file_name, string index_file_name, File
   return vector;
 }
 
+// Essa função remove todos os registros do arquivo informado que passarem 
+// por pelo menos um filtro do vetor de filtros
 int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Filter* filterv, int times) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, READWRITE);
@@ -240,6 +265,8 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
     return returnal;
   }
   
+  // Caso algum filtro seja único (contenha informação sobre id), a tabela de índices é 
+  // gerada e armazenada também em memória primária
   for (int i = 0; i < times; i++) {
     if (filter_unique(filterv[i])) {
       //Cria o índice para busca
@@ -251,9 +278,13 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
 
   for (int i = 0; i < times; i++) {
     Filter filter = filterv[i];
+    // Caso o filtro seja único a tabela de índices é utilizada para conseguir alcançar 
+    // o registro em menor complexidade de tempo, uma vez que é capaz de realizar busca
+    // binária
     if(filter_unique(filter)) {
       long int offset = fm_get_offset_by_id(vector, size, filter_get_id(filter));
-      // printf("%ld\n", offset); // DEBUG
+      // Caso o offset seja -1 significa que o id informado não pertence à nenhum registro
+      // do arquivo de dados, então não é necessário o deslocamento do ponteiro fp
       if (offset != -1)
         fw_delete_with_offset(fm->curr_fw, filter, offset);
     }
@@ -273,6 +304,7 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
   return returnal;
 }
 
+// Essa função insere todos os registros do vetor de registros no arquivo de dados
 int fm_insert_into(FileManager fm, string file_name, string index_name, Register* regv, int times){
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, READWRITE);

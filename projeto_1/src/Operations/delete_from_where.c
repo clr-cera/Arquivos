@@ -8,8 +8,8 @@ int delete_from_where(string file_name, string index_file_name, int rem_quantity
   int counter = -1;
   Filter filterv[rem_quantity];
 
+  // Todos os filtros para remoção são coletados
   for (int i = 0; i < rem_quantity; i++){
-    //printf("Busca %d\n\n", i);
     int m;
     // Cria-se o filtro
     scanf("%d", &m);

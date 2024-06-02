@@ -51,14 +51,17 @@ void header_increse_register_number(Header header, int number) {
   header->nroRegArq+=number;
 }
 
+//Diminui o número de registros informado pelo header
 void header_decrease_register_number(Header header, int number) {
   header->nroRegArq-=number;
 }
 
+//Aumenta o número de registros removidos informado pelo header
 void header_increase_removed_number(Header header, int number) {
   header->nroRegRem+=number;
 }
 
+//Diminui o número de registros removidos informado pelo header
 void header_decrease_removed_number(Header header, int number) {
   header->nroRegRem-=number;
 }
@@ -89,14 +92,17 @@ void erase_header(Header* headerp) {
   *headerp = NULL;
 }
 
+//Retorna true se o arquivo estiver inconsistente
 bool is_inconsistent(Header header) {
   return header->status == '0';
 }
 
+//Retorna o topo do arquivo
 int header_get_topo(Header h){
   return h->topo;
 }
 
-void header_set_topo(Header h, int t){
+// Altera o topo do arquivo para a posição informada
+void header_set_topo(Header h, long int t){
   h->topo = t;
 }

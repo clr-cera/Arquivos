@@ -1,6 +1,9 @@
 #include "index.h"
 #include "stdlib.h"
 
+// Esse arquivo contém funções básicas para manipulação de índices (a estrutura básica da indexação) e outros tipos relacionados
+//
+// O índice relaciona o id de um registro com o seu byteoffset no arquivo
 typedef struct index_ {
   int id;
   long int byteoffset;
@@ -9,6 +12,7 @@ typedef struct index_ {
 typedef indexObj* Index;
 void quicksort_rec(Index* startp, Index* endp);
 
+// Esta função cria o índice que contém o id informado e seu respectivo byteoffset
 Index create_index(int id, long int byteoffset) {
   Index index = (Index) malloc(sizeof(indexObj));
   
@@ -18,16 +22,19 @@ Index create_index(int id, long int byteoffset) {
   return index;
 }
 
+// Esta função apaga um índice da memória
 void erase_index(Index* indexp) {
   free(*indexp);
   *indexp = NULL;
 }
 
+// Esta função escreve o índice em formato binário no arquivo informado
 void write_index(FILE* fp, Index index) {
   fwrite(&(index->id), sizeof(int), 1, fp);
   fwrite(&(index->byteoffset), sizeof(long int), 1, fp);
 }
 
+// Esta função lê o índice em formato binário do arquivo informado
 Index read_index(FILE* fp) {
   int id;
   long int byteoffset;
@@ -38,6 +45,7 @@ Index read_index(FILE* fp) {
   return create_index(id, byteoffset);
 }
 
+// Esta função imprime o índice no stdout, serve apenas para debug
 void print_index(Index index) {
   if (index == NULL)
     return;
@@ -45,29 +53,31 @@ void print_index(Index index) {
   printf("%d, %ld\n", index->id, index->byteoffset);
 }
 
+// Esta função retorna o id do índice
 int get_index_id(Index index) {
   return index->id;
 }
 
+// Esta função retorna o byteoffset do índice
 long int get_index_offset(Index index) {
   return index->byteoffset;
 }
 
-// This function sorts a vector of indexes using quicksort
+// Essa função ordena um vetor de índices, implementamos utilizando o quicksort
 Index* sort_index_vector(Index* vector, int size) {
   quicksort_rec(vector, vector + size-1);
 
   return vector;
 }
 
-// This functions swaps indexes from two positions of memory
+// Essa função troca dois índices de posição levando em consideração seu endereço na memória
 void swap(Index* a, Index* b) {
   Index temp = *a;
   *a = *b;
   *b = temp;
 }
 
-// This implements the logic for quicksort
+// Essa função implementa a lógica para o quicksort de índices
 void quicksort_rec(Index* startp, Index* endp) {
   if(startp >= endp) return;
   Index* i = startp;
@@ -101,6 +111,7 @@ void quicksort_rec(Index* startp, Index* endp) {
   }
 }
 
+// Essa função apaga da memória um vetor de índices
 void erase_index_vector(Index** vectorp, int size) {
   Index* vector = *vectorp;
   for(int i = 0; i < size; i++) {

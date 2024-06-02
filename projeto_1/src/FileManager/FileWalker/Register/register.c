@@ -267,19 +267,24 @@ bool set_removed(Register reg) {
   return true;
 }
 
+//Altera o campo prox do registro
 bool set_prox(Register reg, long int p){
   reg->prox = p;
   return true;
 }
 
+//Retorna o campo prox do registro
 long int get_prox(Register reg){
   return reg->prox;
 }
 
+//Retorna a posição do registro no arquivo de dados
 long int get_read_at(Register reg){
   return reg->read_at;
 }
 
+//Retorna um registro informado pelo stdin
+//É utilizada na inserção de registros
 Register read_reg_from_keyboard(){
   Register new = (Register) malloc(sizeof(register_obj));
 
@@ -326,6 +331,7 @@ Register read_reg_from_keyboard(){
 }
 
 //Utilizada para atualizar um registro ou sobreescrever um registro antigo
+//Mantém o tamanho do registro antigo e completa o espaço com o char '$'
 void overwrite_register(FILE* fp, Register reg, Register old){
 
   if(reg->tamanhoRegistro > old->tamanhoRegistro){
