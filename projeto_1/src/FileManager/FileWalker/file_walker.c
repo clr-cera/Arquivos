@@ -222,7 +222,7 @@ int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
   
   int counter = 0;
 
-  if(!is_removed(reg)) {
+  if(!is_removed(reg) && check_register(reg, filter)) {
     fseek(fw->fp, get_read_at(reg), SEEK_SET);
     add_removed_list(fw, reg);
     counter=1;
