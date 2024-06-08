@@ -96,7 +96,7 @@ int fw_print_all(FileWalker fw) {
   while(ftell(fw->fp) != final_pos){
     Register reg = read_register(fw->fp);
     if(!is_removed(reg)) {
-      debug_register(reg);
+      print_register(reg);
       counter++;
     }
     free_register(&reg);
