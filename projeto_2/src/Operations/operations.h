@@ -18,3 +18,12 @@ int create_index_file(string data_file_name, string index_file_name, FileManager
 int delete_from_where(string file_name, string index_file_name, int rem_quantity, FileManager fm);
 
 int insert_into(string file_name, string index_file_name, int add_quantity, FileManager fm);
+int insert_into(string file_name, string index_file_name, int add_quantity, FileManager fm);
+
+int create_index_B(string data_file_name, string index_file_name, FileManager fm);
+
+int select_from_where_id_B(string data_file_name, string index_file_name, FileManager fm);
+
+int select_from_where_B(string data_file_name, string index_file_name, FileManager fm);
+
+int insert_into_B(string file_name, string index_file_name, int add_quantity, FileManager fm);
