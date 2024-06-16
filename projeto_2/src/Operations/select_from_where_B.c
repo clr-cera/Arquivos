@@ -3,13 +3,13 @@
 // Operação de número 9
 
 // Essa operação busca todos os registros que obedecem um filtro, são realizadas buscas conforme a quantidade informada
-int delete_from_where(string file_name, string index_file_name, int rem_quantity, FileManager fm) {
+int select_from_where_B(string file_name, string index_file_name, int search_quantity, FileManager fm) {
 
   int counter = -1;
-  Filter filterv[rem_quantity];
+  Filter filterv[search_quantity];
 
-  // Todos os filtros para remoção são coletados
-  for (int i = 0; i < rem_quantity; i++){
+  // Todos os filtros para busca são coletados
+  for (int i = 0; i < search_quantity; i++){
     int m;
     // Cria-se o filtro
     scanf("%d", &m);
@@ -18,12 +18,12 @@ int delete_from_where(string file_name, string index_file_name, int rem_quantity
 
   // Imprime todos os registros que passam no filtro
   //To do: implement fm_print_all_filter_B
-  //counter = fm_print_all_filter_B(fm, file_name, index_file_name, filterv, rem_quantity);
+  //counter = fm_print_all_filter_B(fm, file_name, index_file_name, filterv, search_quantity);
   // Se for -1, o arquivo não existe
   if (counter == -1) return counter;
 
   // Apaga todos os filtros da memória
-  for (int i = 0; i < rem_quantity; i++){
+  for (int i = 0; i < search_quantity; i++){
     erase_filter(&(filterv[i]));
   }
 

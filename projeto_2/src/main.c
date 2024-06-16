@@ -7,15 +7,16 @@
 // a operação requisitada
 
 int main(void) {
-  char c;
+  int op = 0;
   FileManager file_manager = create_file_manager();
 
   // Parser da operação a ser realizada
-  while (scanf(" %c", &c) != EOF){
+  while (true){
     int returnal = 0;
+    op = read_op();
 
     //Operação 1
-    if (c == '1') {
+    if (op == 1) {
       char* input_path = read_string();
       char* output_name = read_string();
 
@@ -25,7 +26,7 @@ int main(void) {
     }
 
     //Operação 2
-    if (c == '2') {
+    if (op == 2) {
       char* file_name = read_string();
 
       returnal = select_from(file_name, file_manager);
@@ -33,7 +34,7 @@ int main(void) {
     }
 
     //Operação 3
-    if (c == '3') {
+    if (op == 3) {
       char* file_name = read_string();
       int search_quantity; scanf(" %d", &search_quantity);
 
@@ -42,7 +43,7 @@ int main(void) {
     }
 
     //Operação 4
-    if (c == '4') {
+    if (op == 4) {
       char* data_file_name = read_string();
       char* index_file_name = read_string();
 
@@ -53,7 +54,7 @@ int main(void) {
     }
 
     //Operação 5
-    if (c == '5') {
+    if (op == 5) {
       char* file_name = read_string();
       char* index_name = read_string();
       int rem_quantity; scanf(" %d", &rem_quantity);
@@ -64,7 +65,55 @@ int main(void) {
     }
 
     //Operação 6
-    if (c == '6') {
+    if (op == 6) {
+      char* file_name = read_string();
+      char* index_name = read_string();
+      int add_quantity; scanf(" %d", &add_quantity);
+
+      returnal = insert_into(file_name, index_name, add_quantity, file_manager);
+      free(file_name);
+      free(index_name);
+    }
+
+    //Operação 7
+    if (op == 7) {
+      char* data_file_name = read_string();
+      char* index_file_name = read_string();
+
+      returnal = create_index_B(data_file_name, index_file_name, file_manager);
+
+      free(data_file_name);
+      free(index_file_name);
+    }
+
+    //Operação 8
+    if (op == 8) {
+      char* file_name = read_string();
+      char* index_name = read_string();
+      int search_quantity; scanf(" %d", &search_quantity);
+
+      returnal = select_from_where_id_B(file_name, index_name, search_quantity, file_manager);
+      free(file_name);
+      free(index_name);
+    }
+
+    //Operação 9
+    if (op == 9) {
+      char* file_name = read_string();
+      char* index_name = read_string();
+      int search_quantity; scanf(" %d", &search_quantity);
+
+      returnal = select_from_where_B(file_name, index_name, search_quantity, file_manager);
+      free(file_name);
+      free(index_name);
+    }
+
+    //Operação 10
+    if (op == 10) {
+
+      //Debug
+      printf("2 digit ops are working");
+
       char* file_name = read_string();
       char* index_name = read_string();
       int add_quantity; scanf(" %d", &add_quantity);
@@ -76,6 +125,9 @@ int main(void) {
 
     if (returnal == -1)
       printf("Falha no processamento do arquivo.\n");
+    
+    if (op == -1)
+      break;
   }
 
   erase_file_manager(&file_manager);

@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "ctype.h"
+#include "stdbool.h"
 
 typedef char* string;
 // lib é responsável por conter qualquer conteúdo necessário mas não diretamente relacionado à matéria
@@ -14,3 +15,4 @@ char* string_slicer(char* str, int start, int size);
 int count_lines(FILE* fp);
 int read_age();
 long int read_ID();
+int read_op();

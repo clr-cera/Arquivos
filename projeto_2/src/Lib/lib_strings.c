@@ -128,3 +128,29 @@ long int read_ID(){
   return n / 10;
 
 }
+
+int read_op(){
+  char c;
+
+  //Pula qualquer coisa antes de chegar no valor da operação em si
+  while((c = getchar()) != EOF && isspace(c));
+
+  while(c<47 || c>57){
+
+    if(c == EOF)
+      return -1;
+      
+    c = getchar();
+  }
+
+  long int n = 0;
+
+  while(c >= 48 && c <= 57){
+    n += c - 48;
+    n *= 10;
+    c = getchar();
+  }
+
+  return n / 10;
+
+}
