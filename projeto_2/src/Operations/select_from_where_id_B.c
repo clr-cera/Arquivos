@@ -18,8 +18,8 @@ int select_from_where_id_B(string file_name, string index_file_name, int rem_qua
   }
 
   // Busca na árvore B todos os registros correspondentes aos IDs passados
-  //To do: Implement fm_search_B_tree_by_ID
-  //counter = fm_search_B_tree_by_ID(fm, file_name, index_file_name, IDv, rem_quantity);
+  //To do: Implement fm_print_all_filter_unique_B
+  //counter = fm_print_all_filter_unique_B(fm, file_name, index_file_name, IDv, rem_quantity);
   // Se for -1, o arquivo não existe
   if (counter == -1) return counter;
 
