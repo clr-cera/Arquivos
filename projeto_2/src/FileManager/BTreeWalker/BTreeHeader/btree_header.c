@@ -76,3 +76,6 @@ void b_header_set_raiz(BTreeHeader b_header, int raiz) {
   b_header->noRaiz = raiz;
 }
 
+int b_header_get_raiz(BTreeHeader b_header) {
+  return b_header->noRaiz;
+}

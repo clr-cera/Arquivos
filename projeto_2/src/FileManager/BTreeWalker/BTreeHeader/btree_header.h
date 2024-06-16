@@ -17,3 +17,4 @@ void b_header_increase_chaves(BTreeHeader b_header, int number);
 void b_header_increase_prox(BTreeHeader b_header,int number);
 void b_header_set_raiz(BTreeHeader b_header, int raiz);
 
+int b_header_get_raiz(BTreeHeader b_header);
