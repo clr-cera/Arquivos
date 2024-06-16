@@ -13,3 +13,4 @@ int dist_to_target(char* str, int start, char target);
 char* string_slicer(char* str, int start, int size);
 int count_lines(FILE* fp);
 int read_age();
+long int read_ID();

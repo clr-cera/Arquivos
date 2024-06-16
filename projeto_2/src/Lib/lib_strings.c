@@ -108,3 +108,23 @@ int read_age(){
   return n / 10;
 
 }
+
+long int read_ID(){
+  char c;
+
+  //Pula qualquer coisa antes de chegar no valor do ID em si
+  while((c = getchar()) != EOF && isspace(c));
+  while(c<47 || c>57)
+    c = getchar();
+
+  long int n = 0;
+
+  while(c >= 48 && c <= 57){
+    n += c - 48;
+    n *= 10;
+    c = getchar();
+  }
+
+  return n / 10;
+
+}
