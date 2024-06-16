@@ -28,9 +28,28 @@ Node create_node(int altura) {
   return node;
 }
 
+void insert_index_in_node(Node node, Index index) {
+  node->chaves[node->nroChaves] = index;
+  node->nroChaves+=1;
+  sort_index_vector(node->chaves, node->nroChaves);
+}
+
 void erase_node(Node* pnode) {
   free(*pnode);
   *pnode = NULL;
+}
+
+int get_nroChaves(Node node){
+  return node->nroChaves;
+}
+
+void debug_node(Node node) {
+  printf("Altura: %d\n", node->alturaNo);
+  printf("NroChaves: %d\n", node->nroChaves);
+  
+  for(int i = 0; i < ORDER; i++) {
+    print_index(node->chaves[i]);
+  }
 }
 
 
