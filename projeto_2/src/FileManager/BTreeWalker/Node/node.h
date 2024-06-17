@@ -27,6 +27,9 @@ SearchAnswer search_offset_or_rrn(Node node, int key);
 
 bool node_is_full(Node node);
 
+int node_get_altura(Node node);
+void set_left_child(Node node, int child);
+
 void insert_index_in_node(Node node, Index index, int right_child);
 SplitReturnal node_split(Index index, int right_child, Node node);
 

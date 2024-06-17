@@ -85,6 +85,12 @@ void jump_rrn(BTreeWalker bw, int rrn) {
   fseek(bw->fp, 60*(rrn+1), SEEK_SET);
 }
 
+void write_rrn_erase(BTreeWalker bw, int rrn, Node* nodep) {
+  jump_rrn(bw, rrn);
+  write_node(bw->fp, *nodep);
+  erase_node(nodep);
+}
+
 void reset_position(BTreeWalker bw) {
   fseek(bw->fp, 60, SEEK_SET);
 }
@@ -120,17 +126,46 @@ long int bw_search_rec(BTreeWalker bw, int rrn, int key) {
   }
 }
 
+// Essa função coordena a inserção de um índice na árvore B
 int bw_insert(BTreeWalker bw, Index index) {
+  // Se a árvore B estiver vazia
+  if(b_header_get_raiz(bw->b_header) == -1) {
+    Node node = create_node(0);
+    insert_index_in_node(node, index, -1);
+    write_rrn_erase(bw, 0, &node);
+
+    b_header_increase_chaves(bw->b_header, 1);
+    b_header_set_raiz(bw->b_header, 0);
+    return 1;
+  }
+
   InsertReturnal returnal = bw_insert_rec(bw, b_header_get_raiz(bw->b_header), index);
-
-  reset_position(bw);
-
+  // Se retornar erro, significa que já havia uma chave com o id da chave inserida
   if (returnal.error) {
     return 0;
   }
-  else {
-    return 1;
+
+  // Caso haja split na raíz, uma nova raíz deve ser criada
+  if (returnal.promoted != NULL) {
+    jump_rrn(bw, returnal.right_child);
+    Node child = read_node(bw->fp);
+    int altura = node_get_altura(child);
+
+    Node new_root = create_node(altura+1);
+    insert_index_in_node(new_root, returnal.promoted, returnal.right_child);
+    set_left_child(new_root, b_header_get_raiz(bw->b_header));
+
+    int new_root_rrn = b_header_get_prox(bw->b_header);
+    write_rrn_erase(bw, new_root_rrn, &new_root);
+    b_header_set_raiz(bw->b_header, new_root_rrn);
   }
+
+  b_header_increase_chaves(bw->b_header, 1);
+  reset_position(bw);
+
+
+  return 1;
+
 }
 
 InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index) {
@@ -148,6 +183,7 @@ InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index) {
   Node node = read_node(bw->fp);
 
   SearchAnswer answer = search_offset_or_rrn(node, get_index_id(index));
+
   if(answer.is_offset) {
     erase_node(&node);
     returnal.error = true;
@@ -163,30 +199,22 @@ InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index) {
 
   if(!node_is_full(node)) {
     insert_index_in_node(node, below.promoted, below.right_child); 
-    jump_rrn(bw, current_rrn);
-    write_node(bw->fp, node);
-    erase_node(&node);
+    write_rrn_erase(bw, current_rrn, &node);
 
     return returnal;
   }
   
   else {
     SplitReturnal split_returnal = node_split(below.promoted, below.right_child, node);
+    split_returnal.right_child = b_header_get_prox(bw->b_header);
+    b_header_increase_prox(bw->b_header);
     
-    jump_rrn(bw, current_rrn);
-    write_node(bw->fp, node);
-    erase_node(&node);
+    write_rrn_erase(bw, current_rrn, &node);
+    write_rrn_erase(bw, split_returnal.right_child, &split_returnal.new_node);
 
-    //TODO think about split returnal right child, shouldn it always be at prox rrn? So should it be a split returnal?
-    jump_rrn(bw, split_returnal.right_child);
-    write_node(bw->fp, split_returnal.new_node);
-    erase_node(&split_returnal.new_node);
 
     returnal.promoted = split_returnal.promoted;
     returnal.right_child = split_returnal.right_child;
-
     return returnal;
   }
 }
-
-

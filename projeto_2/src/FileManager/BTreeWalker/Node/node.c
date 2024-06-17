@@ -113,5 +113,13 @@ bool node_is_full(Node node) {
   return node->nroChaves == ORDER-1;
 }
 
+int node_get_altura(Node node) {
+  return node->alturaNo;
+}
+
+void set_left_child(Node node, int child) {
+  node->descendetes[0] = child;
+}
+
 //TODO implement split
 SplitReturnal node_split(Index index, int right_child, Node node);

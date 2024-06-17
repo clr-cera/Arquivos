@@ -68,8 +68,8 @@ void b_header_increase_chaves(BTreeHeader b_header, int number) {
   b_header->nroChaves+=number;
 }
 
-void b_header_increase_prox(BTreeHeader b_header,int number) {
-  b_header->proxRRN+=number;
+void b_header_increase_prox(BTreeHeader b_header) {
+  b_header->proxRRN++;
 }
 
 void b_header_set_raiz(BTreeHeader b_header, int raiz) {
@@ -78,4 +78,8 @@ void b_header_set_raiz(BTreeHeader b_header, int raiz) {
 
 int b_header_get_raiz(BTreeHeader b_header) {
   return b_header->noRaiz;
+}
+
+int b_header_get_prox(BTreeHeader b_header) {
+  return b_header->proxRRN;
 }
