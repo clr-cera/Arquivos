@@ -157,7 +157,9 @@ int bw_insert(BTreeWalker bw, Index index) {
 
     int new_root_rrn = b_header_get_prox(bw->b_header);
     write_rrn_erase(bw, new_root_rrn, &new_root);
+
     b_header_set_raiz(bw->b_header, new_root_rrn);
+    b_header_increase_prox(bw->b_header);
   }
 
   b_header_increase_chaves(bw->b_header, 1);
