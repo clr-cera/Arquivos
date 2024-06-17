@@ -10,7 +10,7 @@ typedef struct node_ {
   int nroChaves;
 
   Index chaves[ORDER];
-  int descendetes[ORDER];
+  int descendetes[ORDER+1];
 }nodeObj;
 
 
@@ -67,10 +67,28 @@ Node read_node(FILE* fp) {
   return node;
 }
 
-//TODO need to sort both vectors based on index
+// Esta função ordena o node assumindo que só há um indíce desordenado no fim do vetor
+void sort_keys(Node node) {
+  for(int i = node->nroChaves; i > 0; i--) {
+    if(get_index_id(node->chaves[i-1]) > get_index_id(node->chaves[i])) {
+      Index tmp_index = node->chaves[i];
+      node->chaves[i] = node->chaves[i-1];
+      node->chaves[i-1] = tmp_index;
+
+      int tmp_desc = node->descendetes[i+1];
+      node->descendetes[i+1] = node->descendetes[i];
+      node->descendetes[i] = tmp_desc; 
+    }
+    else {
+      break;
+    }
+  }
+}
+
 void insert_index_in_node(Node node, Index index, int right_child) {
   node->chaves[node->nroChaves] = index;
   node->descendetes[node->nroChaves+1] = right_child;
+  sort_keys(node);
   node->nroChaves+=1;
 }
 

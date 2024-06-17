@@ -150,6 +150,7 @@ int bw_insert(BTreeWalker bw, Index index) {
     jump_rrn(bw, returnal.right_child);
     Node child = read_node(bw->fp);
     int altura = node_get_altura(child);
+    erase_node(&child);
 
     Node new_root = create_node(altura+1);
     insert_index_in_node(new_root, returnal.promoted, returnal.right_child);
