@@ -1,5 +1,6 @@
 #include "FileWalker/file_walker.h"
 #include "IndexWalker/index_walker.h"
+#include "BTreeWalker/btree_walker.h"
 #include "file_manager.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,6 +19,7 @@ void fm_close_index_walker(FileManager fm);
 typedef struct file_manager_obj_ {
   FileWalker curr_fw;
   IndexWalker curr_iw;
+  BTreeWalker curr_bw;
 }file_manager_obj;
 
 typedef file_manager_obj* FileManager;
@@ -27,12 +29,13 @@ FileManager create_file_manager(void) {
   FileManager fm = (FileManager) malloc(sizeof(file_manager_obj));
   fm->curr_fw = NULL; 
   fm->curr_iw = NULL;
+  fm->curr_bw = NULL;
   return fm;
 }
 
 // Apaga o file manager da memória primária
-// Assumimos que qualquer File Walker e Index Walker já tenho sido apagado da memória
-// neste ponto, uma vez que após uma operação não é permitido que qualquer um dos dois
+// Assumimos que qualquer walker já tenho sido apagado da memória
+// neste ponto, uma vez que após uma operação não é permitido que qualquer walker
 // ainda exista na memória
 void erase_file_manager(FileManager* fmp) {
   free(*fmp);
@@ -58,9 +61,33 @@ int fm_create_index_walker(FileManager fm, string file_name, OpenType open_type)
   else return 1;
 }
 
-//Fecha o file walker associado a um dado File Manager
+//Fecha o index walker associado a um dado File Manager
 void fm_close_index_walker(FileManager fm) {
-  close_index_walker(&fm->curr_iw);
+  close_index_walker(&fm->curr_iw, true);
+}
+
+// Cria um BTree Walker e o associa ao File Manager
+// Utiliza a enum OpenType para selecionar o modo de abertura do arquivo
+int fm_create_b_walker(FileManager fm, string file_name, OpenType open_type) {
+  string file_path = concat_string(DATA_PATH, file_name);
+
+  if(open_type == WRITE) {
+    fm->curr_bw = create_b_walker(file_path, "wb");
+  }
+  if(open_type == READ) {
+    fm->curr_bw = create_b_walker(file_path, "rb");
+  }
+  if(open_type == READWRITE) {
+    fm->curr_bw = create_b_walker(file_path, "rb+");
+  }
+
+  if (fm->curr_bw == NULL) return -1;
+  else return 1;
+}
+
+//Fecha o b walker associado a um dado File Manager
+void fm_close_b_walker(FileManager fm) {
+  close_b_walker(&fm->curr_bw, true);
 }
 
 //Chama a função de transformar o arquivo csv em um vetor de registros e passa esse vetor de registros para ser inserido em um arquivo binário com nome "file_name"
@@ -324,3 +351,40 @@ int fm_insert_into(FileManager fm, string file_name, string index_name, Register
   fm_close_file_walker(fm);
   return returnal;
 }
+
+//Imprime todos os registros no arquivo informado que respeitem as condições de um dado filtro
+int fm_print_id_B(FileManager fm, string file_name, string index_file_name, int* index_vector, int times) {
+  int returnal;
+  returnal = fm_create_file_walker(fm, file_name, READ);
+  if (returnal == -1){
+    return returnal;
+  }
+
+  // TODO O ARQUIVO DEVE SER CRIADO
+  returnal = fm_create_b_walker(fm, index_file_name, READ);
+  if (returnal == -1){
+    fm_close_file_walker(fm);
+    return returnal;
+  }
+
+  for(int i = 0; i < times; i++) {
+    printf("Busca %d\n\n", i+1);
+
+    returnal = 0;
+
+    long int offset = bw_search_offset(fm->curr_bw, index_vector[i]);
+
+    if(offset != -1) {
+      returnal = fw_print_with_offset(fm->curr_fw, NULL, offset);
+    }
+
+    if (returnal == 0) {
+      printf("Registro inexistente.\n\n");
+    }
+  }
+
+  fm_close_file_walker(fm);
+  fm_close_b_walker(fm);
+  return returnal;
+}
+

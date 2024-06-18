@@ -89,6 +89,10 @@ Filter read_filter(int m) {
 
 //Compara um registro com um filtro e retorna se o registro passa no filtro ou não
 bool check_register(Register reg, Filter filter) {
+  if (filter == NULL) {
+    return true;
+  }
+
   bool a = true;
   if (filter->id != -1) a = get_id(reg) == filter->id;
   

@@ -36,7 +36,7 @@ IndexWalker create_index_walker(string file_path, string mode) {
     iw->index_header = get_index_header(iw->index_fp);
     
     if(is_inconsistent_index_header(iw->index_header)){
-      close_index_walker(&iw);
+      close_index_walker(&iw, false);
       return NULL;
     }
 
@@ -49,12 +49,14 @@ IndexWalker create_index_walker(string file_path, string mode) {
 }
 
 // Remove um Index Walker da memória
-void close_index_walker(IndexWalker* iwp) {
+void close_index_walker(IndexWalker* iwp, bool is_con) {
   IndexWalker iw = *iwp;
   
   free(iw->index_file_path);
-  index_header_set_status_con(iw->index_header);
-  iw_refresh_header(iw);
+  if(is_con) {
+    index_header_set_status_con(iw->index_header);
+    iw_refresh_header(iw);
+  }
 
   if (iw->index_header != NULL) 
     erase_index_header(&iw->index_header);

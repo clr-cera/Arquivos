@@ -14,7 +14,7 @@ operations:
 funcoes_fornecidas:
 	gcc -c src/Funcoes_fornecidas/*.c -g
 
-file_manager: file_walker index_walker
+file_manager: file_walker index_walker b_tree
 	gcc -c src/FileManager/*.c -g
 
 file_walker: header register filter
@@ -37,6 +37,16 @@ index:
 
 index_header:
 	gcc -c src/FileManager/IndexWalker/IndexHeader/*.c -g
+
+b_tree: node b_header
+	gcc -c src/FileManager/BTreeWalker/*.c -g
+
+node:
+	gcc -c src/FileManager/BTreeWalker/Node/*.c -g
+
+b_header:
+	gcc -c src/FileManager/BTreeWalker/BTreeHeader/*.c -g
+
 
 clean:
 	rm -f *.o *.output *.zip

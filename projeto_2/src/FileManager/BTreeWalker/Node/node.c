@@ -58,6 +58,7 @@ Node read_node(FILE* fp) {
   fread(&(node->nroChaves), 1, sizeof(int), fp);
 
   for(int i = 0; i < ORDER-1; i++) {
+    erase_index(&node->chaves[i]);
     node->chaves[i] = read_index(fp);
   }
 

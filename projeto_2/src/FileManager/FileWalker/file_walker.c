@@ -232,6 +232,25 @@ int fw_delete_with_offset(FileWalker fw, Filter filter, long int offset) {
   return counter;
 }
 
+//
+int fw_print_with_offset(FileWalker fw, Filter filter, long int offset) {
+  long int initial_pos = ftell(fw->fp);
+
+  fseek(fw->fp, offset, SEEK_SET); 
+  Register reg = read_register(fw->fp);
+  
+  int counter = 0;
+
+  if(!is_removed(reg) && check_register(reg, filter)) {
+    print_register(reg);
+    free_register(&reg);
+    counter=1;
+  }
+
+  fseek(fw->fp, initial_pos, SEEK_SET);
+  return counter;
+}
+
 void add_removed_list(FileWalker fw, Register reg){
   //Configura o registro como logicamente removido
   set_removed(reg);

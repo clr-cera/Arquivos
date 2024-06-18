@@ -37,4 +37,7 @@ int fm_delete_all_filter(FileManager fm, string file_name, string index_name, Fi
 Index* fm_create_index_table(string data_file_name, string index_file_name, FileManager fm, bool should_erase);
 
 int fm_insert_into(FileManager fm, string file_name, string index_name, Register* regv, int times);
+
+int fm_print_id_B(FileManager fm, string file_name, string index_file_name, int* index_vector, int times);
+
 #endif
