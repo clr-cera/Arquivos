@@ -168,7 +168,6 @@ int bw_insert(BTreeWalker bw, Index index) {
 
 
   return 1;
-
 }
 
 InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index) {

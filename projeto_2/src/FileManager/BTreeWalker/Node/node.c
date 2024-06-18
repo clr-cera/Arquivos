@@ -24,6 +24,7 @@ Node create_node(int altura) {
     node->chaves[i] = create_index(-1, -1);
     node->descendetes[i] = -1;
   }
+  node->descendetes[ORDER] = -1; // Colocar o último descendente
 
   return node;
 }
@@ -86,6 +87,10 @@ void sort_keys(Node node) {
 }
 
 void insert_index_in_node(Node node, Index index, int right_child) {
+  if(node->chaves[node->nroChaves] != NULL){
+    erase_index(&node->chaves[node->nroChaves]);
+  }
+
   node->chaves[node->nroChaves] = index;
   node->descendetes[node->nroChaves+1] = right_child;
   sort_keys(node);
@@ -139,5 +144,33 @@ void set_left_child(Node node, int child) {
   node->descendetes[0] = child;
 }
 
-//TODO implement split
-SplitReturnal node_split(Index index, int right_child, Node node);
+SplitReturnal node_split(Index index, int right_child, Node node) {
+  insert_index_in_node(node, index, right_child);
+
+  // Configurar novo nó
+  Node new_node = create_node(node->alturaNo);
+  set_left_child(new_node, node->descendetes[1+((ORDER-1)/2)]);
+
+  // Guardar o promovido e remover de node
+  Index promoted = node->chaves[(ORDER-1)/2];
+  int prom_r_child = -1; // Não é possível saber ainda, uma vez que isso vai ser configurado no código de inserção
+  node->chaves[(ORDER-1)/2] = create_index(-1, -1);
+  node->descendetes[1+((ORDER-1)/2)] = -1;
+  
+
+  // Inserir chaves e filhos à direita do promovido em new_node e removê-los de node
+  for(int i = 1+((ORDER-1)/2); i < node->nroChaves; i++) {
+    insert_index_in_node(new_node, node->chaves[i], node->descendetes[i+1]);
+    
+    node->chaves[i] = create_index(-1, -1);
+    node->descendetes[i+1] = -1;
+  }
+
+
+  SplitReturnal split_returnal;
+  split_returnal.new_node = new_node;
+  split_returnal.promoted = promoted;
+  split_returnal.right_child = prom_r_child;
+
+  return split_returnal;
+}
