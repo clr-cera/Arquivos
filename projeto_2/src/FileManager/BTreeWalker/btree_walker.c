@@ -34,7 +34,7 @@ BTreeWalker create_b_walker(string file_path, string mode) {
   
   bw->file_path = file_path;
 
-  if (strcmp(mode, "wb") == 0) {
+  if (strcmp(mode, "wb+") == 0) {
     bw->b_header = new_b_header();
     write_b_header(bw->fp, bw->b_header);
   }
@@ -87,6 +87,7 @@ void jump_rrn(BTreeWalker bw, int rrn) {
 
 void write_rrn_erase(BTreeWalker bw, int rrn, Node* nodep) {
   jump_rrn(bw, rrn);
+  //debug_node(*nodep);
   write_node(bw->fp, *nodep);
   erase_node(nodep);
 }
@@ -136,6 +137,8 @@ int bw_insert(BTreeWalker bw, Index index) {
 
     b_header_increase_chaves(bw->b_header, 1);
     b_header_set_raiz(bw->b_header, 0);
+    b_header_increase_prox(bw->b_header);
+
     return 1;
   }
 
@@ -151,6 +154,7 @@ int bw_insert(BTreeWalker bw, Index index) {
     Node child = read_node(bw->fp);
     int altura = node_get_altura(child);
     erase_node(&child);
+
 
     Node new_root = create_node(altura+1);
     insert_index_in_node(new_root, returnal.promoted, returnal.right_child);
@@ -183,6 +187,7 @@ InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index) {
 
   jump_rrn(bw, current_rrn);
   Node node = read_node(bw->fp);
+  //debug_node(node);
 
   SearchAnswer answer = search_offset_or_rrn(node, get_index_id(index));
 
@@ -210,6 +215,7 @@ InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index) {
     SplitReturnal split_returnal = node_split(below.promoted, below.right_child, node);
     split_returnal.right_child = b_header_get_prox(bw->b_header);
     b_header_increase_prox(bw->b_header);
+
     
     write_rrn_erase(bw, current_rrn, &node);
     write_rrn_erase(bw, split_returnal.right_child, &split_returnal.new_node);

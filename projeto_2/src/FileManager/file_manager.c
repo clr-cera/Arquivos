@@ -72,7 +72,7 @@ int fm_create_b_walker(FileManager fm, string file_name, OpenType open_type) {
   string file_path = concat_string(DATA_PATH, file_name);
 
   if(open_type == WRITE) {
-    fm->curr_bw = create_b_walker(file_path, "wb");
+    fm->curr_bw = create_b_walker(file_path, "wb+");
   }
   if(open_type == READ) {
     fm->curr_bw = create_b_walker(file_path, "rb");
@@ -277,6 +277,41 @@ Index* fm_create_index_table(string data_file_name, string index_file_name, File
   }
 
   return vector;
+}
+
+// Essa função gera um arquivo de árvore B a partir do arquivo de dados informado
+int fm_create_b_tree(string data_file_name, string b_file_name, FileManager fm) {
+  int returnal;
+  bool should_close = false;
+
+  if(fm->curr_fw == NULL){
+    returnal = fm_create_file_walker(fm, data_file_name, READ);
+    if (returnal == -1){
+      return returnal;
+    }
+    should_close = true;
+  }
+
+  returnal = fm_create_b_walker(fm, b_file_name, WRITE);
+  if (returnal == -1){
+    if(should_close) {
+      fm_close_file_walker(fm);
+    }
+    return returnal;
+  }
+
+  Index index;
+
+  while(fw_index_tok(&index, fm->curr_fw) != NULL) {
+    bw_insert(fm->curr_bw, index);
+  };
+
+  if(should_close) {
+    fm_close_file_walker(fm);
+  }
+  fm_close_b_walker(fm);
+
+  return 1;
 }
 
 // Essa função remove todos os registros do arquivo informado que passarem 

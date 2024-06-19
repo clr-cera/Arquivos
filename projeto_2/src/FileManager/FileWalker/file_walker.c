@@ -96,7 +96,8 @@ int fw_print_all(FileWalker fw) {
   while(ftell(fw->fp) != final_pos){
     Register reg = read_register(fw->fp);
     if(!is_removed(reg)) {
-      print_register(reg);
+      debug_register(reg); //DEBUG
+      //print_register(reg);
       counter++;
     }
     free_register(&reg);
@@ -441,6 +442,33 @@ void debug_removed_list(FileWalker fw){
   }
 
   printf("Fim da lista\n");
+}
 
+void fw_reset_position(FileWalker fw) {
+  fseek(fw->fp, 25, SEEK_SET);
+}
 
+Index fw_index_tok(Index* indexp, FileWalker fw) {
+  long int position = ftell(fw->fp);
+  fseek(fw->fp, 0, SEEK_END);
+  long int final_pos = ftell(fw->fp);
+  fseek(fw->fp, position, SEEK_SET);
+
+  if(position < final_pos) {
+    Register reg = read_register(fw->fp);
+    
+    if(!is_removed(reg)) {
+      *indexp = create_index(get_id(reg), position);
+    }
+
+    free_register(&reg); 
+
+    return *indexp;
+  }
+
+  else {
+    fw_reset_position(fw);
+    *indexp = NULL;
+    return *indexp;
+  }
 }

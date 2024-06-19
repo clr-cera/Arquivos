@@ -28,3 +28,5 @@ int fw_insert_into(FileWalker fw, Register reg);
 
 int fw_print_with_offset(FileWalker fw, Filter filter, long int offset);
 
+Index fw_index_tok(Index* indexp, FileWalker fw);
+

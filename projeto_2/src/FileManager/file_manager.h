@@ -38,6 +38,7 @@ Index* fm_create_index_table(string data_file_name, string index_file_name, File
 
 int fm_insert_into(FileManager fm, string file_name, string index_name, Register* regv, int times);
 
+int fm_create_b_tree(string data_file_name, string b_file_name, FileManager fm);
 int fm_print_id_B(FileManager fm, string file_name, string index_file_name, int* index_vector, int times);
 
 #endif

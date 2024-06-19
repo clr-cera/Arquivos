@@ -95,7 +95,10 @@ void insert_index_in_node(Node node, Index index, int right_child) {
   node->chaves[node->nroChaves] = index;
   node->descendetes[node->nroChaves+1] = right_child;
   sort_keys(node);
+  
+  //debug_node(node); // DEBUG
   node->nroChaves+=1;
+  //debug_node(node); // DEBUG
 }
 
 int get_nroChaves(Node node){
@@ -106,8 +109,10 @@ void debug_node(Node node) {
   printf("Altura: %d\n", node->alturaNo);
   printf("NroChaves: %d\n", node->nroChaves);
   
+  printf("Child: %d\n", node->descendetes[0]);
   for(int i = 0; i < ORDER; i++) {
     print_index(node->chaves[i]);
+    printf("Child: %d\n", node->descendetes[i]);
   }
 }
 
@@ -134,7 +139,7 @@ SearchAnswer search_offset_or_rrn(Node node, int key) {
 }
 
 bool node_is_full(Node node) {
-  return node->nroChaves == ORDER-1;
+  return node->nroChaves >= ORDER-1;
 }
 
 int node_get_altura(Node node) {
@@ -157,16 +162,18 @@ SplitReturnal node_split(Index index, int right_child, Node node) {
   int prom_r_child = -1; // Não é possível saber ainda, uma vez que isso vai ser configurado no código de inserção
   node->chaves[(ORDER-1)/2] = create_index(-1, -1);
   node->descendetes[1+((ORDER-1)/2)] = -1;
+  node->nroChaves--;
   
 
   // Inserir chaves e filhos à direita do promovido em new_node e removê-los de node
-  for(int i = 1+((ORDER-1)/2); i < node->nroChaves; i++) {
+  int max = node->nroChaves;
+  for(int i = 1+((ORDER-1)/2); i <= max; i++) {
     insert_index_in_node(new_node, node->chaves[i], node->descendetes[i+1]);
     
     node->chaves[i] = create_index(-1, -1);
     node->descendetes[i+1] = -1;
+    node->nroChaves--;
   }
-
 
   SplitReturnal split_returnal;
   split_returnal.new_node = new_node;
