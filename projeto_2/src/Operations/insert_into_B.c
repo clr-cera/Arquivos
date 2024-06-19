@@ -14,9 +14,7 @@ int insert_into_B(string file_name, string index_file_name, int add_quantity, Fi
     regvec[i] = read_reg_from_keyboard();
   }
 
-  // Insere todos os registros no arquivo de dados
-  //To do: implement fm_insert_into_B
-  //returnal = fm_insert_into_B(fm, file_name, index_file_name, regvec, add_quantity);
+  returnal = fm_insert_into_B(fm, file_name, index_file_name, regvec, add_quantity);
 
   if(returnal == -1){
     return returnal;

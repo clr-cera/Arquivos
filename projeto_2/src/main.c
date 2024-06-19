@@ -110,15 +110,11 @@ int main(void) {
 
     //Operação 10
     if (op == 10) {
-
-      //Debug
-      printf("2 digit ops are working");
-
       char* file_name = read_string();
       char* index_name = read_string();
       int add_quantity; scanf(" %d", &add_quantity);
 
-      returnal = insert_into(file_name, index_name, add_quantity, file_manager);
+      returnal = insert_into_B(file_name, index_name, add_quantity, file_manager);
       free(file_name);
       free(index_name);
     }

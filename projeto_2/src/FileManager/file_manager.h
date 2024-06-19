@@ -40,5 +40,7 @@ int fm_insert_into(FileManager fm, string file_name, string index_name, Register
 
 int fm_create_b_tree(string data_file_name, string b_file_name, FileManager fm);
 int fm_print_id_B(FileManager fm, string file_name, string index_file_name, int* index_vector, int times);
+int fm_print_all_filter_B(FileManager fm, string file_name, string B_name, Filter* filterv, int times);
+int fm_insert_into_B(FileManager fm, string file_name, string b_name, Register* regv, int times);
 
 #endif

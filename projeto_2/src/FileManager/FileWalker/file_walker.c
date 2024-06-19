@@ -333,7 +333,7 @@ void add_removed_list(FileWalker fw, Register reg){
 }
 
 //Insere um registro no arquivo binário, conforme as especificações da funcionalidade 6
-int fw_insert_into(FileWalker fw, Register reg){
+long int fw_insert_into(FileWalker fw, Register reg){
   long int initial_pos = ftell(fw->fp);
 
   long int topo = header_get_topo(fw->header);
@@ -342,6 +342,7 @@ int fw_insert_into(FileWalker fw, Register reg){
   //Se o topo é -1, então não há espaços livres no arquivo para inserir o registro. Logo, deve ser inserado no final
   if(topo == -1){
     fseek(fw->fp, 0, SEEK_END);
+    long int byteoffset = ftell(fw->fp);
     write_register(fw->fp, reg);
 
     //Atualiza o Header para acomodar um novo registro no fim do arquivo
@@ -350,7 +351,7 @@ int fw_insert_into(FileWalker fw, Register reg){
     free_register(&reg);
     fseek(fw->fp, initial_pos, SEEK_SET);
     fw_refresh_header(fw);
-    return 0;
+    return byteoffset;
   }
 
   // Se o a lista de removidos não for vazia, significa que algum espaço vazio vai ser ocupado, então já se retira do número de registros removidos
@@ -361,6 +362,7 @@ int fw_insert_into(FileWalker fw, Register reg){
 
   //O caso do primeiro da lista de removidos ser o best-fit recebe um tratamento isolado, pois é o único caso onde o topo deve ser modificado
   if (get_register_tamanho(current) >= get_register_tamanho(reg)){
+    long int byteoffset = topo;
     header_set_topo(fw->header, get_prox(current));
     overwrite_register(fw->fp, reg, current);
     free_register(&reg);
@@ -368,7 +370,7 @@ int fw_insert_into(FileWalker fw, Register reg){
 
     fseek(fw->fp, initial_pos, SEEK_SET);
     fw_refresh_header(fw);
-    return 0;
+    return byteoffset;
   }
 
   //Percorre a lista procurando por espaço
@@ -392,6 +394,7 @@ int fw_insert_into(FileWalker fw, Register reg){
     set_prox(prev, get_prox(current));
     fseek(fw->fp, get_read_at(prev), SEEK_SET);
     write_register(fw->fp, prev);
+    long int byteoffset = get_read_at(current);
     overwrite_register(fw->fp, reg, current);
     free_register(&prev);
     free_register(&current);
@@ -399,11 +402,12 @@ int fw_insert_into(FileWalker fw, Register reg){
 
     fseek(fw->fp, initial_pos, SEEK_SET);
     fw_refresh_header(fw);
-    return 0;
+    return byteoffset;
   }
 
   //Não há espaço na lista, logo insere no fim
   fseek(fw->fp, 0, SEEK_END);
+  long int byteoffset = ftell(fw->fp);
   write_register(fw->fp, reg);
 
   //Atualiza o Header para acomodar um novo registro no fim do arquivo
@@ -418,7 +422,7 @@ int fw_insert_into(FileWalker fw, Register reg){
 
   fseek(fw->fp, initial_pos, SEEK_SET);
   fw_refresh_header(fw);
-  return 0;
+  return byteoffset;
 }
 
 // Essa função imprime todos os registros da lista de remoção, utilizando a função de debug

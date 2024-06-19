@@ -23,15 +23,6 @@ int select_from_where_id_B(string file_name, string index_file_name, int search_
   // Libera memória alocada
   free(IDv);
 
-
-  string binario_path = concat_string(DATA_PATH, file_name); 
-  binarioNaTela(binario_path);
-  free(binario_path);
-  
-  string index_path = concat_string(DATA_PATH, index_file_name); 
-  binarioNaTela(index_path);
-  free(index_path);
-
   return counter;
 }
 

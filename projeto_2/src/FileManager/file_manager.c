@@ -282,22 +282,26 @@ Index* fm_create_index_table(string data_file_name, string index_file_name, File
 // Essa função gera um arquivo de árvore B a partir do arquivo de dados informado
 int fm_create_b_tree(string data_file_name, string b_file_name, FileManager fm) {
   int returnal;
-  bool should_close = false;
+  bool should_close_fw = false;
+  bool should_close_bw = false;
 
   if(fm->curr_fw == NULL){
     returnal = fm_create_file_walker(fm, data_file_name, READ);
     if (returnal == -1){
       return returnal;
     }
-    should_close = true;
+    should_close_fw = true;
   }
 
-  returnal = fm_create_b_walker(fm, b_file_name, WRITE);
-  if (returnal == -1){
-    if(should_close) {
-      fm_close_file_walker(fm);
+  if(fm->curr_bw == NULL) {
+    returnal = fm_create_b_walker(fm, b_file_name, WRITE);
+    if (returnal == -1){
+      if(should_close_fw) {
+        fm_close_file_walker(fm);
+      }
+      return returnal;
     }
-    return returnal;
+    should_close_bw = true;
   }
 
   Index index;
@@ -306,10 +310,12 @@ int fm_create_b_tree(string data_file_name, string b_file_name, FileManager fm) 
     bw_insert(fm->curr_bw, index);
   };
 
-  if(should_close) {
+  if(should_close_fw) {
     fm_close_file_walker(fm);
   }
-  fm_close_b_walker(fm);
+  if(should_close_bw) {
+    fm_close_b_walker(fm);
+  }
 
   return 1;
 }
@@ -395,7 +401,6 @@ int fm_print_id_B(FileManager fm, string file_name, string index_file_name, int*
     return returnal;
   }
 
-  // TODO O ARQUIVO DEVE SER CRIADO
   returnal = fm_create_b_walker(fm, index_file_name, READ);
   if (returnal == -1){
     fm_close_file_walker(fm);
@@ -403,7 +408,7 @@ int fm_print_id_B(FileManager fm, string file_name, string index_file_name, int*
   }
 
   for(int i = 0; i < times; i++) {
-    printf("Busca %d\n\n", i+1);
+    printf("BUSCA %d\n\n", i+1);
 
     returnal = 0;
 
@@ -416,6 +421,76 @@ int fm_print_id_B(FileManager fm, string file_name, string index_file_name, int*
     if (returnal == 0) {
       printf("Registro inexistente.\n\n");
     }
+  }
+
+  fm_close_file_walker(fm);
+  fm_close_b_walker(fm);
+  return returnal;
+}
+
+int fm_print_all_filter_B(FileManager fm, string file_name, string B_name, Filter* filterv, int times) {
+  int returnal;
+  returnal = fm_create_file_walker(fm, file_name, READ);
+
+  if(returnal == -1) {
+    return returnal;
+  }
+  
+  returnal = fm_create_b_walker(fm, B_name, READ);
+  if (returnal == -1){
+    fm_close_file_walker(fm);
+    return returnal;
+  }
+
+  for (int i = 0; i < times; i++) {
+    printf("Busca %d\n\n", i+1);
+
+    Filter filter = filterv[i];
+
+    returnal = -1;
+    if(filter_unique(filter)) {
+      long int offset = bw_search_offset(fm->curr_bw, filter_get_id(filter)); 
+      // Caso o offset seja -1 significa que o id informado não pertence à nenhum registro
+      // do arquivo de dados, então não é necessária a busca
+      if (offset != -1){
+        returnal = fw_print_with_offset(fm->curr_fw, filter, offset);
+      }
+    }
+
+    else {
+      returnal = fw_print_all_filter(fm->curr_fw, filter);
+    }
+
+    if (returnal == 0) {
+      printf("Registro inexistente.\n\n");
+    }
+  }
+
+  fm_close_file_walker(fm);
+  fm_close_b_walker(fm);
+  
+  return 1;
+}
+
+// Essa função insere todos os registros do vetor de registros no arquivo de dados
+int fm_insert_into_B(FileManager fm, string file_name, string b_name, Register* regv, int times){
+  int returnal;
+  returnal = fm_create_file_walker(fm, file_name, READWRITE);
+  if(returnal == -1) {
+    return returnal;
+  }
+
+  returnal = fm_create_b_walker(fm, b_name, READWRITE);
+  if (returnal == -1) {
+    fm_close_file_walker(fm);
+    return returnal;
+  }
+  
+  for(int i = 0; i < times; i++) {
+    Register reg = regv[i];
+    int id = get_id(reg);
+    long int byteoffset = fw_insert_into(fm->curr_fw, reg);
+    bw_insert(fm->curr_bw, create_index(id,  byteoffset));
   }
 
   fm_close_file_walker(fm);

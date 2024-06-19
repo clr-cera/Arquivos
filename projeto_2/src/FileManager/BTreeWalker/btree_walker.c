@@ -26,6 +26,7 @@ InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index);
 BTreeWalker create_b_walker(string file_path, string mode) {
   BTreeWalker bw = (BTreeWalker) malloc(sizeof(btree_walkerObj));
   bw->fp = fopen(file_path, mode);
+  
   if (bw->fp == NULL) {
     free(bw);
     return NULL;

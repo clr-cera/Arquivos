@@ -17,24 +17,13 @@ int select_from_where_B(string file_name, string index_file_name, int search_qua
   }
 
   // Imprime todos os registros que passam no filtro
-  //To do: implement fm_print_all_filter_B
-  //counter = fm_print_all_filter_B(fm, file_name, index_file_name, filterv, search_quantity);
-  // Se for -1, o arquivo não existe
+  counter = fm_print_all_filter_B(fm, file_name, index_file_name, filterv, search_quantity);
   if (counter == -1) return counter;
 
   // Apaga todos os filtros da memória
   for (int i = 0; i < search_quantity; i++){
     erase_filter(&(filterv[i]));
   }
-
-
-  string binario_path = concat_string(DATA_PATH, file_name); 
-  binarioNaTela(binario_path);
-  free(binario_path);
-  
-  string index_path = concat_string(DATA_PATH, index_file_name); 
-  binarioNaTela(index_path);
-  free(index_path);
 
   return counter;
 }

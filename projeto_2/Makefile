@@ -65,4 +65,4 @@ zip:
 	zip -R arquivo_2.zip . '*.c' '*.h' 'Makefile' '*.txt'
 
 restore:
-	@cp ./arquivos/Entrada/* ./
+	@cp ./arquivos/files/* ./
