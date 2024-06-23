@@ -452,17 +452,14 @@ void fw_reset_position(FileWalker fw) {
   fseek(fw->fp, 25, SEEK_SET);
 }
 
+//Lê um registro e salva seu ID e endereço em um índice
 Index fw_index_tok(Index* indexp, FileWalker fw) {
-  long int position = ftell(fw->fp);
-  fseek(fw->fp, 0, SEEK_END);
-  long int final_pos = ftell(fw->fp);
-  fseek(fw->fp, position, SEEK_SET);
 
-  if(position < final_pos) {
+  if(ftell(fw->fp) < header_get_proxByteOffset(fw->header)) {
     Register reg = read_register(fw->fp);
     
     if(!is_removed(reg)) {
-      *indexp = create_index(get_id(reg), position);
+      *indexp = create_index(get_id(reg), get_read_at(reg));
     }
 
     free_register(&reg); 

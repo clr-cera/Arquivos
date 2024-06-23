@@ -106,3 +106,8 @@ int header_get_topo(Header h){
 void header_set_topo(Header h, long int t){
   h->topo = t;
 }
+
+//Retorna o próximo byte offset
+long int header_get_proxByteOffset(Header h){
+  return h->proxByteOffset;
+}
