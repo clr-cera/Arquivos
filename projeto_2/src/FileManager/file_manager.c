@@ -428,6 +428,8 @@ int fm_print_id_B(FileManager fm, string file_name, string index_file_name, int*
   return returnal;
 }
 
+//Imprime todos os registros do arquivo de dados correspondentes a um dado filtro
+//Caso o filtro contenha o ID como parametro, utiliza a árvore B para busca
 int fm_print_all_filter_B(FileManager fm, string file_name, string B_name, Filter* filterv, int times) {
   int returnal;
   returnal = fm_create_file_walker(fm, file_name, READ);

@@ -4,7 +4,7 @@
 
 
 typedef struct node_* Node;
-
+//Struct do nó da árvore B
 typedef struct node_ {
   int alturaNo;
   int nroChaves;
@@ -14,7 +14,7 @@ typedef struct node_ {
 }nodeObj;
 
 
-
+//Cria um nó
 Node create_node(int altura) {
   Node node = (Node) malloc(sizeof(nodeObj));
   node->alturaNo = altura;
@@ -29,6 +29,7 @@ Node create_node(int altura) {
   return node;
 }
 
+//Apaga um nó da RAM
 void erase_node(Node* pnode) {
   for(int i = 0; i < ORDER; i++) {
     erase_index(&(*pnode)->chaves[i]);
@@ -38,6 +39,7 @@ void erase_node(Node* pnode) {
   *pnode = NULL;
 }
 
+//Escreve um nó no disco
 void write_node(FILE* fp, Node node) {
   fwrite(&(node->alturaNo), 1, sizeof(int), fp);
   fwrite(&(node->nroChaves), 1, sizeof(int), fp);
@@ -51,6 +53,7 @@ void write_node(FILE* fp, Node node) {
   }
 }
 
+//Lê um nó do disco
 Node read_node(FILE* fp) {
   Node node = create_node(0);
 
@@ -87,6 +90,7 @@ void sort_keys(Node node) {
   }
 }
 
+//Insere um novo índice em um nó já existente
 void insert_index_in_node(Node node, Index index, int right_child) {
   if(node->chaves[node->nroChaves] != NULL){
     erase_index(&node->chaves[node->nroChaves]);
@@ -105,6 +109,7 @@ int get_nroChaves(Node node){
   return node->nroChaves;
 }
 
+//Imprime um nó para fins de transparência durante debug do código
 void debug_node(Node node) {
   printf("Altura: %d\n", node->alturaNo);
   printf("NroChaves: %d\n", node->nroChaves);
@@ -116,16 +121,19 @@ void debug_node(Node node) {
   }
 }
 
+//Realiza a busca de uma chave entre as chaves de um nó
 SearchAnswer search_offset_or_rrn(Node node, int key) {
   SearchAnswer answer;
   
   for(int i = 0; i < node->nroChaves; i++) {
+    //Caso a chave seja encontrada retorna o byte offset
     if(get_index_id(node->chaves[i]) == key) {
       answer.is_offset = true;
       answer.value = get_index_offset(node->chaves[i]);
       return answer;
     }
 
+    //Caso a chave não seja encontrada retorna o RRN do descendente que ela deve pertencer
     if(get_index_id(node->chaves[i]) > key) {
       answer.is_offset = false;
       answer.value = node->descendetes[i];
@@ -133,23 +141,28 @@ SearchAnswer search_offset_or_rrn(Node node, int key) {
     }
   }
 
+  //Caso a chave não seja encontrada retorna o RRN do descendente que ela deve pertencer
   answer.is_offset = false;
   answer.value = node->descendetes[node->nroChaves];
   return answer;
 }
 
+//Retorna se um nó está cheio ou não
 bool node_is_full(Node node) {
   return node->nroChaves >= ORDER-1;
 }
 
+//Retorna a algura de um nó
 int node_get_altura(Node node) {
   return node->alturaNo;
 }
 
+//Define o filho mais a esquerda de um nó
 void set_left_child(Node node, int child) {
   node->descendetes[0] = child;
 }
 
+//Realiza o split
 SplitReturnal node_split(Index index, int right_child, Node node) {
   insert_index_in_node(node, index, right_child);
 

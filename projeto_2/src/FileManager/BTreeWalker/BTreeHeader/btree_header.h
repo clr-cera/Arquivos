@@ -1,6 +1,8 @@
 #include "stdio.h"
 #include "stdbool.h"
 
+//BTreeHeader é a struct do header da árvore B e aqui estão definidas as operações relacionadas a essa struct
+
 typedef struct btree_header_* BTreeHeader;
 
 BTreeHeader new_b_header();

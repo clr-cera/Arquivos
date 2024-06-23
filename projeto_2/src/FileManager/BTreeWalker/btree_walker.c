@@ -4,6 +4,7 @@
 #include "BTreeHeader/btree_header.h"
 #include "btree_walker.h"
 
+//Struct para navegar em uma árvore B
 typedef struct btree_walker_ {
   string file_path;
 
@@ -13,6 +14,7 @@ typedef struct btree_walker_ {
 
 typedef btree_walkerObj* BTreeWalker;
 
+//Struct de retorno da inserção
 typedef struct insert_returnal_ {
   Index promoted;
   int right_child;
@@ -23,6 +25,7 @@ void bw_refresh_header(BTreeWalker bw);
 long int bw_search_rec(BTreeWalker bw, int rrn, int key);
 InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index);
 
+//Cria o navegador da árvore B
 BTreeWalker create_b_walker(string file_path, string mode) {
   BTreeWalker bw = (BTreeWalker) malloc(sizeof(btree_walkerObj));
   bw->fp = fopen(file_path, mode);
@@ -35,6 +38,7 @@ BTreeWalker create_b_walker(string file_path, string mode) {
   
   bw->file_path = file_path;
 
+  //Se o modo de abertura for wb+ ele cria um novo header, caso contrário ele lê o header já existente na árvore
   if (strcmp(mode, "wb+") == 0) {
     bw->b_header = new_b_header();
     write_b_header(bw->fp, bw->b_header);
@@ -56,6 +60,7 @@ BTreeWalker create_b_walker(string file_path, string mode) {
 
 }
 
+//Encerra um navegador árvore B, liberando memória
 void close_b_walker(BTreeWalker* bwp, bool is_con) {
   BTreeWalker bw = *bwp;
   
@@ -75,6 +80,7 @@ void close_b_walker(BTreeWalker* bwp, bool is_con) {
   *bwp = NULL;
 }
 
+//Reescreve o header no arquivo, para atualizar suas informações
 void bw_refresh_header(BTreeWalker bw) {
   int initial_position = ftell(bw->fp);
   fseek(bw->fp, 0, SEEK_SET);
@@ -82,10 +88,12 @@ void bw_refresh_header(BTreeWalker bw) {
   fseek(bw->fp, initial_position, SEEK_SET);
 }
 
+//Pula para um RRN da árvore B
 void jump_rrn(BTreeWalker bw, int rrn) {
   fseek(bw->fp, 60*(rrn+1), SEEK_SET);
 }
 
+//Escreve um nó em disco o libera da memória primária
 void write_rrn_erase(BTreeWalker bw, int rrn, Node* nodep) {
   jump_rrn(bw, rrn);
   //debug_node(*nodep);
@@ -175,6 +183,7 @@ int bw_insert(BTreeWalker bw, Index index) {
   return 1;
 }
 
+//Inserção recursiva na árvore B
 InsertReturnal bw_insert_rec(BTreeWalker bw, int current_rrn, Index index) {
   InsertReturnal returnal;
   returnal.error = false;

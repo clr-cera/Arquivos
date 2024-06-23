@@ -1,14 +1,18 @@
 #include "../../IndexWalker/Index/index.h"
 #include "stdbool.h"
 
+//Node é a struct do nó da árvore B e aqui estão definidas as operações relacionadas a essa struct
+
 #define ORDER 4
 typedef struct node_* Node;
 
+//Struct de retorno da busca entre as chaves de um nó
 typedef struct search_answer_ {
   bool is_offset;
   long int value;
 }SearchAnswer;
 
+//Struct de retorno do split
 typedef struct split_returnal_ {
   Index promoted;
   int right_child;

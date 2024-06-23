@@ -90,6 +90,7 @@ int count_lines(FILE* fp){
 
 int read_age(){
   char c;
+  //Pula espaços insignificantes
   while((c = getchar()) != EOF && isspace(c));
 
   if(c == 'N' || c == 'n') { // idade NULO
@@ -97,18 +98,18 @@ int read_age(){
 		return -1; // -1 para idade nula
   }
 
+  //Conversão de caracteres em base decimal para um valor numérico
   int n = 0;
-
   while(c >= 48 && c <= 57){
     n += c - 48;
     n *= 10;
     c = getchar();
   }
-
   return n / 10;
 
 }
 
+//Função para ler o ID digitado pelo usuário
 long int read_ID(){
   char c;
 
@@ -117,40 +118,36 @@ long int read_ID(){
   while(c<47 || c>57)
     c = getchar();
 
+  //Conversão de caracteres em base decimal para um valor numérico
   long int n = 0;
-
   while(c >= 48 && c <= 57){
     n += c - 48;
     n *= 10;
     c = getchar();
   }
-
   return n / 10;
 
 }
 
+//Função para ler o número da operação digitado pelo usuário
 int read_op(){
   char c;
 
   //Pula qualquer coisa antes de chegar no valor da operação em si
   while((c = getchar()) != EOF && isspace(c));
-
   while(c<47 || c>57){
-
     if(c == EOF)
       return -1;
-      
     c = getchar();
   }
 
+  //Conversão de caracteres em base decimal para um valor numérico
   long int n = 0;
-
   while(c >= 48 && c <= 57){
     n += c - 48;
     n *= 10;
     c = getchar();
   }
-
   return n / 10;
 
 }
